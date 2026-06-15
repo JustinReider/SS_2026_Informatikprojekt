@@ -2034,6 +2034,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1637646942497783593, guid: 8ecdc404384f0e647a3c499ff4acd6bf, type: 3}
+      propertyPath: m_TerrainData
+      value: 
+      objectReference: {fileID: 15600000, guid: ad4683428e612ab459f590b71aa7ae06, type: 2}
+    - target: {fileID: 1637646942497783593, guid: 8ecdc404384f0e647a3c499ff4acd6bf, type: 3}
+      propertyPath: m_ProvidesContacts
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1940563843721932155, guid: 8ecdc404384f0e647a3c499ff4acd6bf, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1000
