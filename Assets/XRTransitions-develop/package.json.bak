@@ -1,0 +1,29 @@
+{
+  "name": "com.sintar.xrtransitions",
+  "version": "0.0.1",
+  "displayName": "XRTransitions",
+  "description": "This Package includes all necessary files for the XRTransitions Package",
+  "dependencies": {
+    "com.unity.xr.interaction.toolkit": "2.0.2",
+    "com.unity.xr.management": "4.2.1",
+	"com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask"
+  },
+ "keywords": [
+    "XR",
+    "XR",
+    "VR",
+    "AR",
+	  "Transition"
+  ],
+  "author": {
+    "name": "Sintar",
+    "email": "feldn@uni-trier.de",
+    "url": "https://www.uni-trier.de/index.php?id=70580"
+  },
+  "samples": [
+   {
+     "displayName": "Example Scenes",
+     "path": "Samples~/Example Scenes"
+   }
+ ]
+}
