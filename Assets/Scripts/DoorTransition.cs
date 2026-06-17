@@ -9,7 +9,7 @@ public class DoorTransition : MonoBehaviour {
 
     void Start() {
         // Scene 2 sofort beim Start additiv laden
-        SceneManager.LoadSceneAsync(nextScene, LoadSceneMode.Additive);
+        //SceneManager.LoadSceneAsync(nextScene, LoadSceneMode.Additive);
     }
 
     private void OnTriggerExit(Collider other) {
