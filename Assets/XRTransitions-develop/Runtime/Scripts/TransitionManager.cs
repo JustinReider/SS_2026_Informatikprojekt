@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Scripts;
 using Unity.XR.CoreUtils;
@@ -12,7 +13,7 @@ using UnityEngine.XR.Interaction.Toolkit.Inputs;
 
 public class TransitionManager : MonoBehaviour
 {
-    [SerializeReference] public List<Transition> Transitions;
+    public PortalTransition transition;
 
     public XROrigin XROrigin => _xrOrigin;
     public Camera MainCamera => _mainCamera;
@@ -44,6 +45,7 @@ public class TransitionManager : MonoBehaviour
     [SerializeField] private Camera _mainCamera;
     [SerializeField] private Transform _leftEyeTransform;
     [SerializeField] private Transform _rightEyeTransform;
+    [SerializeField] public GameObject _portalPrefab;
 
     private XROrigin _xrOrigin;
 
@@ -84,38 +86,66 @@ public class TransitionManager : MonoBehaviour
                 CurrentTransition = null;
             }
         };
+    }
 
-#if UNITY_EDITOR
-        EditorApplication.playModeStateChanged += async change =>
+    public void RegisterTransition(Portal targetPortal)
+    {
+        if (targetPortal == null || targetPortal.transform.parent == null)
         {
-            if (change == PlayModeStateChange.ExitingPlayMode)
+            Debug.LogError("[TransitionManager] Portal oder Portal-Parent fehlt!");
+            return;
+        }
+
+        Context zielContext = targetPortal.transform.parent.GetComponent<Context>();
+        if (zielContext == null)
+        {
+            Debug.LogError($"[TransitionManager] Kein Context auf Parent von {targetPortal.name}!");
+            return;
+        }
+
+        TargetContext = zielContext;
+        PortalTransition neueTransition = new PortalTransition();
+
+        // 1. TransitionManager injizieren
+        FieldInfo managerField = typeof(Transition).GetField("<TransitionManager>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)
+            ?? typeof(Transition).GetField("TransitionManager", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+        managerField?.SetValue(neueTransition, this);
+
+        // 2. Destination setzen
+        FieldInfo destinationField = typeof(Transition).GetField("<Destination>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic);
+        if (destinationField != null) destinationField.SetValue(neueTransition, targetPortal.transform);
+
+        // 3. _targetContext injizieren
+        FieldInfo targetContextField = typeof(Transition).GetField("_targetContext", BindingFlags.Instance | BindingFlags.NonPublic);
+        if (targetContextField != null) targetContextField.SetValue(neueTransition, zielContext);
+
+        // 4. _portalPosition (Start-Portal) setzen
+        if (CurrentContext != null)
+        {
+            Portal lobbyPortal = CurrentContext.GetComponentInChildren<Portal>();
+            if (lobbyPortal != null)
             {
-                foreach (var t in Transitions.Where(transition => transition.IsInitialized))
-                {
-                    await t.Deinitialize();
-                }
+                FieldInfo portalPosField = typeof(PortalTransition).GetField("_portalPosition", BindingFlags.Instance | BindingFlags.NonPublic);
+                if (portalPosField != null) portalPosField.SetValue(neueTransition, lobbyPortal.transform);
             }
-        };
-#endif
-    }
+        }
 
-    public List<Transition> GetActiveTransitions()
-    {
-        return Transitions.Where(transition => transition.IsInitialized).ToList();
-    }
+        // 5. _portalPrefab aus Inspector injizieren
+        if (_portalPrefab != null)
+        {
+            FieldInfo prefabField = typeof(PortalTransition).GetField("_portalPrefab", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            if (prefabField != null) prefabField.SetValue(neueTransition, _portalPrefab);
+        }
+        else
+        {
+            Debug.LogError("[TransitionManager] Kein _portalPrefab im Inspector zugewiesen!");
+        }
 
-    public async Task InitializeTransitionType(Type type)
-    {
-        await Task.WhenAll(Transitions.Where(transition => transition.GetType() != type && transition.IsInitialized)
-            .Select(transition => transition.Deinitialize()));
-        await Task.WhenAll(Transitions.Where(transition => transition.GetType() == type)
-            .Select(transition => transition.Initialize()));
-    }
+        // 6. Initialisieren und zuweisen
+        _ = neueTransition.Initialize();
+        transition = neueTransition;
 
-    public async Task DisableTransitions()
-    {
-        await Task.WhenAll(Transitions.Where(transition => transition.IsInitialized)
-            .Select(transition => transition.Deinitialize()));
+        Debug.Log($"<color=green>[TransitionManager]</color> Neue Transition registriert! Ziel: {targetPortal.name} im Raum: {TargetContext.name}");
     }
 
     /*
