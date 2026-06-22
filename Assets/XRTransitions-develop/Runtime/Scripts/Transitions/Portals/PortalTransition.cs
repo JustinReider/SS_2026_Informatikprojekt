@@ -75,6 +75,7 @@ namespace Scripts
 
         internal override async Task OnActionDown(bool isRight)
         {
+            Debug.Log(_portalPrefab);
             if (_isAnimating)
             {
                 return;
@@ -105,6 +106,7 @@ namespace Scripts
 
         public override Context GetStartContext()
         {
+            Debug.Log("Portalpo: " + _portalPosition.position);
             if (_startContext == null)
             {
                 _startContext = _portalPosition.GetComponentInParent<Context>();
