@@ -45,7 +45,13 @@ namespace Scripts
             _mainCamera = _transitionManager.MainCamera;
             _camera.CopyFrom(_mainCamera);
             _camera.forceIntoRenderTexture = true;
-            _camera.targetTexture = new RenderTexture(_mainCamera.pixelWidth, _mainCamera.pixelHeight, 24);
+            int scaleFactor = 2;
+            int width = _mainCamera.pixelWidth * scaleFactor;
+            int height = _mainCamera.pixelHeight * scaleFactor;
+
+            _camera.targetTexture = new RenderTexture(width, height, 24, RenderTextureFormat.ARGBHalf);
+            _camera.targetTexture.filterMode = FilterMode.Bilinear;
+            _camera.targetTexture.anisoLevel = 4;
             _camera.aspect = _mainCamera.aspect;
             _camera.fieldOfView = _mainCamera.fieldOfView;
             _camera.projectionMatrix = _mainCamera.GetStereoProjectionMatrix(eye);
