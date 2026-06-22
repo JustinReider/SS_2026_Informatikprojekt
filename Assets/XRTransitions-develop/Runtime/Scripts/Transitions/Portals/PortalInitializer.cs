@@ -13,8 +13,9 @@ public class PortalInitializer : MonoBehaviour
 
     public async void InitializeAndSpawnPortals()
     {
-        
+        Debug.Log("SpawnPortalfirst");
         await SpawnPortal();
+        Debug.Log("PortalSpawned");
 
         if (_portalTransition != null)
         {
@@ -35,13 +36,16 @@ public class PortalInitializer : MonoBehaviour
 
     public async Task SpawnPortal()
     {
+        Debug.Log("1");
         _tManager = FindObjectOfType<TransitionManager>();
+        Debug.Log("2");
         if (_tManager == null)
         {
             Debug.LogError("TransitionManager nicht gefunden!");
             return;
         }
 
+        Debug.Log("3");
         _mainCamera = Camera.main;
         while (_mainCamera == null)
         {
@@ -49,28 +53,24 @@ public class PortalInitializer : MonoBehaviour
             await Task.Delay(50);
         }
 
+        Debug.Log("4");
         Context currentContext = _tManager.CurrentContext;
+        Debug.Log("5");
         GameObject contextObj = currentContext.gameObject;
 
+        Debug.Log("6");
         if (contextObj.transform.childCount <= 1)
         {
             Debug.LogError("Context1 hat kein Child(1)! Dies sollte das Portal oder dessen Platzhalter sein.");
             return;
         }
+        Debug.Log("7");
         _portalTransform = contextObj.transform.GetChild(1);
 
-        await _tManager.InitializeTransitionType(typeof(PortalTransition));
+        Debug.Log("9");
+        _portalTransition = _tManager.transition;
 
-        _portalTransition = _tManager.Transitions
-        .FirstOrDefault(t => t is PortalTransition &&
-                             t.GetStartContext() == currentContext &&
-                             t.GetTargetContext() == _tManager.TargetContext) as PortalTransition;
-        if( _portalTransition != null)
-        {
-            await _tManager.DisableTransitions();
-            await _portalTransition.Initialize();
-        }
-
+        Debug.Log("11");
         if (_portalTransition == null)
         {
             Debug.LogWarning("Keine PortalTransition gefunden.");
