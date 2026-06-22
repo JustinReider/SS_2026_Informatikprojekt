@@ -44,7 +44,6 @@ GameObject:
   - component: {fileID: 4000011134933724}
   - component: {fileID: 33000012946460370}
   - component: {fileID: 23000010423345456}
-  - component: {fileID: 64000011518113434}
   m_Layer: 0
   m_Name: ClassicColumnCapC_LOD 1
   m_TagString: Untagged
@@ -124,28 +123,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &64000011518113434
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1000010579559144}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: 5ae76f21b3f0f9740b292287a6403f1e, type: 3}
 --- !u!1 &1000010715323254
 GameObject:
   m_ObjectHideFlags: 0
@@ -312,7 +289,7 @@ GameObject:
   - component: {fileID: 4000012590452606}
   - component: {fileID: 33000012187372872}
   - component: {fileID: 23000013636259140}
-  - component: {fileID: 64000011509080994}
+  - component: {fileID: 5281696032057801749}
   m_Layer: 0
   m_Name: ClassicColumnPillarC_LOD 0
   m_TagString: Untagged
@@ -392,8 +369,8 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &64000011509080994
-MeshCollider:
+--- !u!136 &5281696032057801749
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -410,10 +387,11 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300002, guid: 5bb72e02625f54c45a07fd9b382edf86, type: 3}
+  serializedVersion: 2
+  m_Radius: 0.8386247
+  m_Height: 7.9141226
+  m_Direction: 1
+  m_Center: {x: -0.000000059604645, y: 3.9691558, z: 0.0013429523}
 --- !u!1 &1000011262523740
 GameObject:
   m_ObjectHideFlags: 0
@@ -425,7 +403,6 @@ GameObject:
   - component: {fileID: 4000012430832242}
   - component: {fileID: 33000011111742244}
   - component: {fileID: 23000010916152932}
-  - component: {fileID: 64000010154028112}
   m_Layer: 0
   m_Name: ClassicColumnPillarC_LOD 2
   m_TagString: Untagged
@@ -505,28 +482,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &64000010154028112
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1000011262523740}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300002, guid: 65743bf2900ffe648a9df40a96f982b9, type: 3}
 --- !u!1 &1000012288474958
 GameObject:
   m_ObjectHideFlags: 0
@@ -538,7 +493,6 @@ GameObject:
   - component: {fileID: 4000014010573980}
   - component: {fileID: 33000014167321898}
   - component: {fileID: 23000012345062720}
-  - component: {fileID: 64000010327861806}
   m_Layer: 0
   m_Name: ClassicColumnCapC_LOD 2
   m_TagString: Untagged
@@ -618,28 +572,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &64000010327861806
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1000012288474958}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: 65743bf2900ffe648a9df40a96f982b9, type: 3}
 --- !u!1 &1000012502602210
 GameObject:
   m_ObjectHideFlags: 0
@@ -717,7 +649,6 @@ GameObject:
   - component: {fileID: 4000012973278288}
   - component: {fileID: 33000011725809336}
   - component: {fileID: 23000014289594368}
-  - component: {fileID: 64000010148892056}
   m_Layer: 0
   m_Name: ClassicColumnPillarC_LOD 1
   m_TagString: Untagged
@@ -797,25 +728,3 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &64000010148892056
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1000012884253032}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300002, guid: 5ae76f21b3f0f9740b292287a6403f1e, type: 3}
