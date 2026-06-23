@@ -310,7 +310,7 @@ public class SlaveDeathCard : MonoBehaviour
         HideAllImmediate();
         _activeRoutine = null;
 				//SceneManager.LoadScene("Lobby");
-				LoadingScreenManager.Instance.SimpleLoadScene("Lobby");
+				LoadingScreenManager.Instance.LoadScene("Lobby");
     }
 
     // ---------------------------------------------------------------
