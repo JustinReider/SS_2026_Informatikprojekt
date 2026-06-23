@@ -80,10 +80,31 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2b41c9b1493ac224d87241d208c5fe61, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5852172331929226660}
     - targetCorrespondingSourceObject: {fileID: -6364796951663345645, guid: 2b41c9b1493ac224d87241d208c5fe61, type: 3}
       insertIndex: -1
       addedObject: {fileID: 780651658658910375}
   m_SourcePrefab: {fileID: 100100000, guid: 2b41c9b1493ac224d87241d208c5fe61, type: 3}
+--- !u!1 &279155310780917536 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 2b41c9b1493ac224d87241d208c5fe61, type: 3}
+  m_PrefabInstance: {fileID: 1089496826313153137}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5852172331929226660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 279155310780917536}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55d9590f38d7d924ca598059ee62d3b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RandomAnimationCycle
+  animationCount: 4
 --- !u!1 &2933278711074626146 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -6364796951663345645, guid: 2b41c9b1493ac224d87241d208c5fe61, type: 3}
