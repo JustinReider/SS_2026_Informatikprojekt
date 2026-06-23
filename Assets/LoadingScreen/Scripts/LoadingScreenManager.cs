@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Linq;
+using UnityEngine.Rendering;           
+using UnityEngine.Rendering.Universal;
 
 public class LoadingScreenManager : MonoBehaviour
 {
@@ -17,6 +19,9 @@ public class LoadingScreenManager : MonoBehaviour
 
     [Header("Player")]
     public GameObject playerObject;
+
+		[Header("Global Volume")]
+		public Volume globalVolume;
 
     private bool isLoading = false;
     private LoadingScreenUI ui;
@@ -49,6 +54,11 @@ public class LoadingScreenManager : MonoBehaviour
     {
         if (!isLoading)
             StartCoroutine(LoadSceneCoroutine(targetScene, entranceId));
+    }
+		public void SimpleLoadScene(string targetScene, string entranceId = "default")
+    {
+        if (!isLoading)
+            StartCoroutine(SimpleLoadSceneCoroutine(targetScene, entranceId));
     }
 
     // =========================
@@ -106,7 +116,7 @@ public class LoadingScreenManager : MonoBehaviour
     {
         isLoading = true;
 
-        EnableLoadingScreen();
+        EnableLoadingScreen(false);
 
         Scene currentScene = SceneManager.GetActiveScene();
         yield return SceneManager.UnloadSceneAsync(currentScene);
@@ -170,6 +180,72 @@ public class LoadingScreenManager : MonoBehaviour
         isLoading = false;
     }
 
+		IEnumerator SimpleLoadSceneCoroutine(string targetScene, string entranceId)
+    {
+        isLoading = true;
+				EnablePostProcessing();
+
+        EnableLoadingScreen(true);
+
+        Scene currentScene = SceneManager.GetActiveScene();
+        yield return SceneManager.UnloadSceneAsync(currentScene);
+
+        TeleportPlayerToEntrance(loadingSceneName, "default");
+
+        if (music != null)
+            StartCoroutine(music.FadeIn(fadeTime*2));
+
+        AsyncOperation load = SceneManager.LoadSceneAsync(targetScene, LoadSceneMode.Additive);
+        load.allowSceneActivation = false;
+
+        float timer = 0f;
+
+        while (true)
+        {
+            timer += Time.deltaTime;
+
+            ui?.SetProgress(Mathf.Clamp01(load.progress / 0.9f));
+
+            if (load.progress >= 0.9f && timer >= minLoadTime)
+                break;
+
+            yield return null;
+        }
+
+        ui?.SetProgress(1f);
+
+        yield return PrewarmPhysics(SceneManager.GetSceneByName(targetScene));
+
+        load.allowSceneActivation = true;
+        yield return load;
+
+        float warmupTime = 0f;
+        float warmupDuration = 0.5f;
+
+        while (warmupTime < warmupDuration)
+        {
+            warmupTime += Time.unscaledDeltaTime;
+            yield return new WaitForFixedUpdate();
+        }
+
+        yield return null;
+
+        if (music != null)
+            StartCoroutine(music.FadeOut(fadeTime));
+
+        yield return new WaitForSeconds(fadeTime);
+
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName(targetScene));
+        TeleportPlayerToEntrance(targetScene, entranceId);
+
+        playerObject.SetActive(true);
+
+        DisableLoadingScreen();
+
+        isLoading = false;
+    }
+
+
     // =========================
     // PLAYER TELEPORT
     // =========================
@@ -219,17 +295,28 @@ public class LoadingScreenManager : MonoBehaviour
     // =========================
     // LOADING SCREEN CONTROL
     // =========================
-    void EnableLoadingScreen()
+    void EnableLoadingScreen(bool simple)
     {
         Scene loadingScene = SceneManager.GetSceneByName(loadingSceneName);
 
-        foreach (GameObject go in loadingScene.GetRootGameObjects())
+        foreach (GameObject go in loadingScene.GetRootGameObjects()) {
+            //if (go == playerObject && simple) go.SetActive(false);
             go.SetActive(true);
+				}
 
+				//if (!simple)
         foreach (var script in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
             .OfType<ILoadingScreenScript>())
             script.OnLoadingScreenActivated();
     }
+
+		void EnablePostProcessing()
+    {
+			if (globalVolume != null) {
+				globalVolume.enabled = true;
+			}
+    }
+
 
     void DisableLoadingScreen()
     {

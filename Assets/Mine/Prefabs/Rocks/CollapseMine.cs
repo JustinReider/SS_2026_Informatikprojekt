@@ -24,15 +24,4 @@ public class TriggerAnimatorBool : MonoBehaviour
             animator.SetBool(boolParameter, true);
         }
     }
-
-    private void OnTriggerExit(Collider other)
-    {
-        // optional
-        // if (!other.CompareTag("Player")) return;
-
-        if (animator != null)
-        {
-            animator.SetBool(boolParameter, false);
-        }
-    }
 }
