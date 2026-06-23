@@ -309,7 +309,8 @@ public class SlaveDeathCard : MonoBehaviour
         canvas.enabled = false;
         HideAllImmediate();
         _activeRoutine = null;
-				SceneManager.LoadScene("Lobby");
+				//SceneManager.LoadScene("Lobby");
+				LoadingScreenManager.Instance.SimpleLoadScene("Lobby");
     }
 
     // ---------------------------------------------------------------
