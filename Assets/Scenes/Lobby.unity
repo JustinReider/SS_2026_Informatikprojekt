@@ -216,11 +216,56 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4404552553744619850, guid: e639f565a1dc39f4dae39493dcb1020a, type: 3}
+      propertyPath: m_Size.y
+      value: 1.4191538
+      objectReference: {fileID: 0}
+    - target: {fileID: 4404552553744619850, guid: e639f565a1dc39f4dae39493dcb1020a, type: 3}
+      propertyPath: m_Size.z
+      value: 0.72817373
+      objectReference: {fileID: 0}
+    - target: {fileID: 4404552553744619850, guid: e639f565a1dc39f4dae39493dcb1020a, type: 3}
+      propertyPath: m_Center.x
+      value: -0.0000038049818
+      objectReference: {fileID: 0}
+    - target: {fileID: 4404552553744619850, guid: e639f565a1dc39f4dae39493dcb1020a, type: 3}
+      propertyPath: m_Center.y
+      value: -0.20957945
+      objectReference: {fileID: 0}
+    - target: {fileID: 4404552553744619850, guid: e639f565a1dc39f4dae39493dcb1020a, type: 3}
+      propertyPath: m_Center.z
+      value: -0.36408573
+      objectReference: {fileID: 0}
+    - target: {fileID: 4404552553744619850, guid: e639f565a1dc39f4dae39493dcb1020a, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3741368612717365660, guid: e639f565a1dc39f4dae39493dcb1020a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2545367186405078299}
   m_SourcePrefab: {fileID: 100100000, guid: e639f565a1dc39f4dae39493dcb1020a, type: 3}
+--- !u!1 &2545367186405078298 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3741368612717365660, guid: e639f565a1dc39f4dae39493dcb1020a, type: 3}
+  m_PrefabInstance: {fileID: 2545367186405078297}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2545367186405078299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2545367186405078298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da44c3ade076bcc439b26595e08d5b70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NextSceneCollider
+  sceneNameToLoad: Market
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

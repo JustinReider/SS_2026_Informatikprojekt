@@ -70,6 +70,6 @@ public class DoubleDoorOpener : MonoBehaviour
     }
 
     // Szene laden
-		LoadingScreenManager.Instance.LoadScene(sceneNameToLoad);
+		LoadingScreenManager.Instance.SimpleLoadScene(sceneNameToLoad);
 }
 }
