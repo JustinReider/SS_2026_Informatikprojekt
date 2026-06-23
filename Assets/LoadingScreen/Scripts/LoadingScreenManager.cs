@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Linq;
-using UnityEngine.Rendering;           
+using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
 public class LoadingScreenManager : MonoBehaviour
@@ -20,8 +20,8 @@ public class LoadingScreenManager : MonoBehaviour
     [Header("Player")]
     public GameObject playerObject;
 
-		[Header("Global Volume")]
-		public Volume globalVolume;
+    [Header("Global Volume")]
+    public Volume globalVolume;
 
     private bool isLoading = false;
     private LoadingScreenUI ui;
@@ -55,7 +55,8 @@ public class LoadingScreenManager : MonoBehaviour
         if (!isLoading)
             StartCoroutine(LoadSceneCoroutine(targetScene, entranceId));
     }
-		public void SimpleLoadScene(string targetScene, string entranceId = "default")
+
+    public void SimpleLoadScene(string targetScene, string entranceId = "default")
     {
         if (!isLoading)
             StartCoroutine(SimpleLoadSceneCoroutine(targetScene, entranceId));
@@ -79,7 +80,6 @@ public class LoadingScreenManager : MonoBehaviour
         while (true)
         {
             timer += Time.deltaTime;
-
             ui?.SetProgress(Mathf.Clamp01(load.progress / 0.9f));
 
             if (load.progress >= 0.9f && timer >= minStartLoadTime)
@@ -94,18 +94,18 @@ public class LoadingScreenManager : MonoBehaviour
         load.allowSceneActivation = true;
         yield return load;
 
+        Scene loadedScene = SceneManager.GetSceneAt(SceneManager.sceneCount - 1);
+
         if (music != null)
             StartCoroutine(music.FadeOut(fadeTime));
 
         yield return StartCoroutine(ui.FadeOut(fadeTime));
-
         yield return new WaitForSeconds(fadeTime);
 
-        SceneManager.SetActiveScene(SceneManager.GetSceneByName(firstScene));
-        TeleportPlayerToEntrance(firstScene, firstEntranceId);
+        SceneManager.SetActiveScene(loadedScene);
+        TeleportPlayerToEntrance(loadedScene, firstEntranceId);
 
         playerObject.SetActive(true);
-
         DisableLoadingScreen();
     }
 
@@ -136,7 +136,6 @@ public class LoadingScreenManager : MonoBehaviour
         while (true)
         {
             timer += Time.deltaTime;
-
             ui?.SetProgress(Mathf.Clamp01(load.progress / 0.9f));
 
             if (load.progress >= 0.9f && timer >= minLoadTime)
@@ -147,15 +146,14 @@ public class LoadingScreenManager : MonoBehaviour
 
         ui?.SetProgress(1f);
 
-        yield return PrewarmPhysics(SceneManager.GetSceneByName(targetScene));
-
         load.allowSceneActivation = true;
         yield return load;
 
-        float warmupTime = 0f;
-        float warmupDuration = 0.5f;
+        // Scene per Index holen statt GetSceneByName — funktioniert auch bei wiederholtem Laden
+        Scene loadedScene = SceneManager.GetSceneAt(SceneManager.sceneCount - 1);
 
-        while (warmupTime < warmupDuration)
+        float warmupTime = 0f;
+        while (warmupTime < 0.5f)
         {
             warmupTime += Time.unscaledDeltaTime;
             yield return new WaitForFixedUpdate();
@@ -167,23 +165,24 @@ public class LoadingScreenManager : MonoBehaviour
             StartCoroutine(music.FadeOut(fadeTime));
 
         yield return StartCoroutine(ui.FadeOut(fadeTime));
-
         yield return new WaitForSeconds(fadeTime);
 
-        SceneManager.SetActiveScene(SceneManager.GetSceneByName(targetScene));
-        TeleportPlayerToEntrance(targetScene, entranceId);
+        SceneManager.SetActiveScene(loadedScene);
+        TeleportPlayerToEntrance(loadedScene, entranceId);
 
         playerObject.SetActive(true);
-
         DisableLoadingScreen();
 
         isLoading = false;
     }
 
-		IEnumerator SimpleLoadSceneCoroutine(string targetScene, string entranceId)
+    // =========================
+    // SIMPLE SCENE LOAD
+    // =========================
+    IEnumerator SimpleLoadSceneCoroutine(string targetScene, string entranceId)
     {
         isLoading = true;
-				EnablePostProcessing();
+        EnablePostProcessing();
 
         EnableLoadingScreen(true);
 
@@ -193,7 +192,7 @@ public class LoadingScreenManager : MonoBehaviour
         TeleportPlayerToEntrance(loadingSceneName, "default");
 
         if (music != null)
-            StartCoroutine(music.FadeIn(fadeTime*2));
+            StartCoroutine(music.FadeIn(fadeTime * 2));
 
         AsyncOperation load = SceneManager.LoadSceneAsync(targetScene, LoadSceneMode.Additive);
         load.allowSceneActivation = false;
@@ -203,7 +202,6 @@ public class LoadingScreenManager : MonoBehaviour
         while (true)
         {
             timer += Time.deltaTime;
-
             ui?.SetProgress(Mathf.Clamp01(load.progress / 0.9f));
 
             if (load.progress >= 0.9f && timer >= minLoadTime)
@@ -214,15 +212,14 @@ public class LoadingScreenManager : MonoBehaviour
 
         ui?.SetProgress(1f);
 
-        yield return PrewarmPhysics(SceneManager.GetSceneByName(targetScene));
-
         load.allowSceneActivation = true;
         yield return load;
 
-        float warmupTime = 0f;
-        float warmupDuration = 0.5f;
+        // Scene per Index holen statt GetSceneByName — funktioniert auch bei wiederholtem Laden
+        Scene loadedScene = SceneManager.GetSceneAt(SceneManager.sceneCount - 1);
 
-        while (warmupTime < warmupDuration)
+        float warmupTime = 0f;
+        while (warmupTime < 0.5f)
         {
             warmupTime += Time.unscaledDeltaTime;
             yield return new WaitForFixedUpdate();
@@ -235,23 +232,28 @@ public class LoadingScreenManager : MonoBehaviour
 
         yield return new WaitForSeconds(fadeTime);
 
-        SceneManager.SetActiveScene(SceneManager.GetSceneByName(targetScene));
-        TeleportPlayerToEntrance(targetScene, entranceId);
+        SceneManager.SetActiveScene(loadedScene);
+        TeleportPlayerToEntrance(loadedScene, entranceId);
 
         playerObject.SetActive(true);
-
         DisableLoadingScreen();
 
         isLoading = false;
     }
 
-
     // =========================
     // PLAYER TELEPORT
     // =========================
-    void TeleportPlayerToEntrance(string sceneName, string entranceId)
+
+    // Überladung mit Scene-Objekt (primär — zuverlässig bei wiederholtem Laden)
+    void TeleportPlayerToEntrance(Scene scene, string entranceId)
     {
-        Scene scene = SceneManager.GetSceneByName(sceneName);
+        if (!scene.IsValid() || !scene.isLoaded)
+        {
+            Debug.LogWarning($"TeleportPlayerToEntrance: Scene '{scene.name}' ist nicht gültig oder nicht geladen.");
+            return;
+        }
+
         SceneEntrance targetEntrance = null;
         SceneEntrance fallback = null;
 
@@ -288,8 +290,14 @@ public class LoadingScreenManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"Kein SceneEntrance mit id='{entranceId}' in '{sceneName}' gefunden.");
+            Debug.LogWarning($"Kein SceneEntrance mit id='{entranceId}' in '{scene.name}' gefunden.");
         }
+    }
+
+    // Überladung mit Scene-Namen (für LoadingScreen-Teleport)
+    void TeleportPlayerToEntrance(string sceneName, string entranceId)
+    {
+        TeleportPlayerToEntrance(SceneManager.GetSceneByName(sceneName), entranceId);
     }
 
     // =========================
@@ -299,24 +307,19 @@ public class LoadingScreenManager : MonoBehaviour
     {
         Scene loadingScene = SceneManager.GetSceneByName(loadingSceneName);
 
-        foreach (GameObject go in loadingScene.GetRootGameObjects()) {
-            //if (go == playerObject && simple) go.SetActive(false);
+        foreach (GameObject go in loadingScene.GetRootGameObjects())
             go.SetActive(true);
-				}
 
-				//if (!simple)
         foreach (var script in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
             .OfType<ILoadingScreenScript>())
             script.OnLoadingScreenActivated();
     }
 
-		void EnablePostProcessing()
+    void EnablePostProcessing()
     {
-			if (globalVolume != null) {
-				globalVolume.enabled = true;
-			}
+        if (globalVolume != null)
+            globalVolume.enabled = true;
     }
-
 
     void DisableLoadingScreen()
     {
@@ -342,7 +345,6 @@ public class LoadingScreenManager : MonoBehaviour
         {
             mc.enabled = false;
             mc.enabled = true;
-
             yield return null;
         }
     }
