@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c860ea2cc093eee42905529ae5a8b8cc
+guid: c33f3745d80c6dd4c9e81da9fe0a69c4
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
@@ -7,8 +7,18 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: CH_NPC_MOB_GParrot_A01_MI_ATR
-    second: {fileID: 2100000, guid: 48dc7e567a4e8f74c842949493e4512e, type: 2}
+      name: material0
+    second: {fileID: 2100000, guid: debb2635d4f7d9a46b50b6a2c3f0dda3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: material1
+    second: {fileID: 2100000, guid: 60db0a328e3a8b64faf73b3f9d050bfe, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: material2
+    second: {fileID: 2100000, guid: 2e5037c070af1d24194bc389dbee0677, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

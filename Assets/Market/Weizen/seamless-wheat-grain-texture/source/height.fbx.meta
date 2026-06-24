@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c860ea2cc093eee42905529ae5a8b8cc
+guid: f4513b4c9da36ac4395059ec904bc6c0
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
@@ -7,8 +7,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: CH_NPC_MOB_GParrot_A01_MI_ATR
-    second: {fileID: 2100000, guid: 48dc7e567a4e8f74c842949493e4512e, type: 2}
+      name: Material
+    second: {fileID: 2100000, guid: 927915113956afd4a8a9cabf7b3bcded, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -61,7 +61,7 @@ ModelImporter:
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
     optimizeBones: 1
-    generateMeshLods: 0
+    generateMeshLods: 1
     meshLodGenerationFlags: 0
     maximumMeshLod: -1
     meshOptimizationFlags: -1
