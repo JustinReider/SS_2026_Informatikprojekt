@@ -19,6 +19,7 @@ public class LoadingScreenManager : MonoBehaviour
 
     [Header("Player")]
     public GameObject playerObject;
+		public Camera mainCamera;
 
     [Header("Global Volume")]
     public Volume globalVolume;
@@ -247,53 +248,59 @@ public class LoadingScreenManager : MonoBehaviour
 
     // Überladung mit Scene-Objekt (primär — zuverlässig bei wiederholtem Laden)
     void TeleportPlayerToEntrance(Scene scene, string entranceId)
-    {
-        if (!scene.IsValid() || !scene.isLoaded)
-        {
-            Debug.LogWarning($"TeleportPlayerToEntrance: Scene '{scene.name}' ist nicht gültig oder nicht geladen.");
-            return;
-        }
-
-        SceneEntrance targetEntrance = null;
-        SceneEntrance fallback = null;
-
-        foreach (GameObject root in scene.GetRootGameObjects())
-        {
-            foreach (SceneEntrance entrance in root.GetComponentsInChildren<SceneEntrance>())
-            {
-                if (entrance.entranceId == entranceId)
-                {
-                    targetEntrance = entrance;
-                    break;
-                }
-
-                if (entrance.entranceId == "default")
-                    fallback = entrance;
-            }
-
-            if (targetEntrance != null) break;
-        }
-
-        SceneEntrance spawn = targetEntrance ?? fallback;
-
-        if (spawn != null)
-        {
-            var cc = playerObject.GetComponent<CharacterController>();
-            if (cc != null) cc.enabled = false;
-
-            playerObject.transform.SetPositionAndRotation(
-                spawn.transform.position,
-                spawn.transform.rotation
-            );
-
-            if (cc != null) cc.enabled = true;
-        }
-        else
-        {
-            Debug.LogWarning($"Kein SceneEntrance mit id='{entranceId}' in '{scene.name}' gefunden.");
-        }
-    }
-
+		{
+		    if (!scene.IsValid() || !scene.isLoaded)
+		    {
+		        Debug.LogWarning($"TeleportPlayerToEntrance: Scene '{scene.name}' ist nicht gültig oder nicht geladen.");
+		        return;
+		    }
+		
+		    SceneEntrance targetEntrance = null;
+		    SceneEntrance fallback = null;
+		
+		    foreach (GameObject root in scene.GetRootGameObjects())
+		    {
+		        foreach (SceneEntrance entrance in root.GetComponentsInChildren<SceneEntrance>())
+		        {
+		            if (entrance.entranceId == entranceId)
+		            {
+		                targetEntrance = entrance;
+		                break;
+		            }
+		
+		            if (entrance.entranceId == "default")
+		                fallback = entrance;
+		        }
+		
+		        if (targetEntrance != null) break;
+		    }
+		
+		    SceneEntrance spawn = targetEntrance ?? fallback;
+		
+		    if (spawn != null)
+		    {
+		        var cc = playerObject.GetComponent<CharacterController>();
+		        if (cc != null) cc.enabled = false;
+		
+		        // Camera-Offset berechnen (wie weit ist die Camera vom Origin versetzt)
+		        Vector3 cameraOffset = mainCamera.transform.position - playerObject.transform.position;
+						cameraOffset.y = 0;
+						
+						// Offset relativ zur Spawn-Rotation transformieren
+						Vector3 rotatedOffset = spawn.transform.rotation * Quaternion.Inverse(playerObject.transform.rotation) * cameraOffset;
+						
+						playerObject.transform.SetPositionAndRotation(
+						    spawn.transform.position - rotatedOffset,
+						    spawn.transform.rotation
+						);		
+		        if (cc != null) cc.enabled = true;
+		    }
+		    else
+		    {
+		        Debug.LogWarning($"Kein SceneEntrance mit id='{entranceId}' in '{scene.name}' gefunden.");
+		    }
+		}
+		
     // Überladung mit Scene-Namen (für LoadingScreen-Teleport)
     void TeleportPlayerToEntrance(string sceneName, string entranceId)
     {
