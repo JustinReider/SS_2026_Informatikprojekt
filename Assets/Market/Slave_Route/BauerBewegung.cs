@@ -1,26 +1,51 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
 
 public class BauerBewegung : MonoBehaviour
 {
     private NavMeshAgent agent;
-    public Transform[] waypoints; // Marktstände, Personen, etc.
-    private int aktuellerWaypoint = 0;
-    public float stopAbstand = 0.5f;
+
+    public Transform[] waypoints;
+    public float[] waitTimes; // wie lange er bleibt
+
+    private int index = 0;
+    private bool waiting = false;
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        GoToNext();
     }
 
     void Update()
     {
-        // Ist Ziel erreicht?
-        if (!agent.pathPending && agent.remainingDistance < stopAbstand)
+        if (waiting) return;
+
+        if (!agent.pathPending && agent.remainingDistance <= 0.5f)
         {
-            // Zum nächsten Waypoint
-            aktuellerWaypoint = (aktuellerWaypoint + 1) % waypoints.Length;
-            agent.SetDestination(waypoints[aktuellerWaypoint].position);
+            StartCoroutine(WaitAndGo());
         }
+    }
+
+    IEnumerator WaitAndGo()
+    {
+        waiting = true;
+
+        float wait = 2f; // fallback
+        if (waitTimes != null && index < waitTimes.Length)
+            wait = waitTimes[index];
+
+        yield return new WaitForSeconds(wait);
+
+        index = (index + 1) % waypoints.Length;
+        GoToNext();
+
+        waiting = false;
+    }
+
+    void GoToNext()
+    {
+        agent.SetDestination(waypoints[index].position);
     }
 }
