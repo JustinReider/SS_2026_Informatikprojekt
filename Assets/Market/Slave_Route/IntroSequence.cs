@@ -4,9 +4,6 @@ using System.Collections;
 public class IntroSequence : MonoBehaviour
 {
     public Transform senator;
-    public UnityEngine.AI.NavMeshAgent senatorAgent;
-    public Transform tribunePosition;
-    public Transform senatorStoppPosition;
     
     // Audio Clips
     public AudioClip clipSenatorAnkunft; // "Ecce! Servi pulchri hic sunt!"
@@ -18,7 +15,8 @@ public class IntroSequence : MonoBehaviour
     public AudioClip clipSenatorAkzeptiert; // "Bene! Accipe denarios! Tu mecum veni, serve!"
     public AudioClip clipVerkaueferVerabschiedet; // "Gratias, domine! Vale!"
     
-    public AudioSource audioSource;
+    public AudioSource senatorAudioSource;
+    public AudioSource verkaeuferAudioSource;
 
     void Start()
     {
@@ -29,69 +27,42 @@ public class IntroSequence : MonoBehaviour
     {
         // 1. Warten auf Tribüne
         Debug.Log("Warte auf Senator...");
-        yield return new WaitForSeconds(10f);
+        yield return new WaitForSeconds(3f);
 
         // 2. Senator läuft zur Position
         Debug.Log("Senator kommt!");
-        senatorAgent.SetDestination(senatorStoppPosition.position);
-        
-        // Warte bis Senator ankommt
-        while (senatorAgent.remainingDistance > 0.5f)
-            yield return null;
 
         yield return new WaitForSeconds(2f);
 
         // 3. Senator kommt an (schaut dich an)
-        audioSource.PlayOneShot(clipSenatorAnkunft); // ~3 Sek
+        senatorAudioSource.PlayOneShot(clipSenatorAnkunft); // ~3 Sek
         yield return new WaitForSeconds(3.5f);
 
         // 4. Senator redet mit Verkäufer
-        audioSource.PlayOneShot(clipSenatorDialog1); // ~3 Sek
+        senatorAudioSource.PlayOneShot(clipSenatorDialog1); // ~3 Sek
         yield return new WaitForSeconds(3.5f);
 
         // 5. Verkäufer antwortet
-        audioSource.PlayOneShot(clipVerkaueferAntwort); // ~3 Sek
+        verkaeuferAudioSource.PlayOneShot(clipVerkaueferAntwort); // ~3 Sek
         yield return new WaitForSeconds(3.5f);
 
         // 6. Senator wählt dich aus
-        audioSource.PlayOneShot(clipSenatorAuswaehlt); // ~2 Sek
+        senatorAudioSource.PlayOneShot(clipSenatorAuswaehlt); // ~2 Sek
         yield return new WaitForSeconds(2.5f);
 
         // 7. Senator fragt Preis
-        audioSource.PlayOneShot(clipSenatorPreis); // ~2 Sek
+        senatorAudioSource.PlayOneShot(clipSenatorPreis); // ~2 Sek
         yield return new WaitForSeconds(2.5f);
 
         // 8. Verkäufer sagt Preis
-        audioSource.PlayOneShot(clipVerkaueferPreis); // ~2 Sek
+        verkaeuferAudioSource.PlayOneShot(clipVerkaueferPreis); // ~2 Sek
         yield return new WaitForSeconds(2.5f);
 
         // 9. Senator akzeptiert
-        audioSource.PlayOneShot(clipSenatorAkzeptiert); // ~3 Sek
+        senatorAudioSource.PlayOneShot(clipSenatorAkzeptiert); // ~3 Sek
         yield return new WaitForSeconds(3.5f);
 
         // 10. (Optional) Verkäufer verabschiedet
-        audioSource.PlayOneShot(clipVerkaueferVerabschiedet); // ~2 Sek
-        yield return new WaitForSeconds(2.5f);
-
-        // 11. Cutscene: Du springst hinter Senator
-        Debug.Log("Du wirst Sklave des Senators!");
-        SprungHinterSenator();
-
-        yield return new WaitForSeconds(1f);
-    }
-
-    void SprungHinterSenator()
-    {
-        // Spieler-Position hinter Senator setzen
-        Transform spieler = Camera.main.transform.parent; // Sklave Body
-        spieler.position = senator.position - senator.forward * 1f;
-        spieler.rotation = senator.rotation;
-        
-        // SklavenFollowBauer aktivieren
-        SklavenFollowBauer follow = spieler.GetComponent<SklavenFollowBauer>();
-        if (follow != null)
-            follow.enabled = true;
-        
-        Debug.Log("Du folgst jetzt dem Senator!");
+        verkaeuferAudioSource.PlayOneShot(clipVerkaueferVerabschiedet); // ~2 Sek
     }
 }

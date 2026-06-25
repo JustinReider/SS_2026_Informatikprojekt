@@ -12,6 +12,16 @@ public class GuardPatrol : MonoBehaviour
     public float walkSpeed = 1.5f;
     public float rotationSpeed = 300f;
 
+    [Header("Rotation")]
+    [Tooltip("Wenn false, wird jegliche Rotation komplett deaktiviert. Der NPC behält dann seine Start-Rotation.")]
+    public bool enableRotation = true;
+
+    [Header("Arrival Detection")]
+    [Tooltip("Unter dieser Geschwindigkeit gilt der Agent als 'gestoppt'.")]
+    public float arrivalVelocityThreshold = 0.05f;
+    [Tooltip("Wie nah muss der Agent am Waypoint sein um anzuhalten (overridet NavMesh stoppingDistance).")]
+    public float arrivalDistance = 0.25f;
+
     [Header("Follow Mode")]
     [Tooltip("Ab diesem Waypoint-Index wird in den Follow-Modus gewechselt. -1 = kein Follow-Modus.")]
     public int followFromWaypointIndex = -1;
@@ -27,117 +37,115 @@ public class GuardPatrol : MonoBehaviour
     private NavMeshAgent agent;
     private Animator animator;
     private int currentWaypoint = 0;
-    private bool isPatrolling = false;
-    private bool isFollowing = false;
+    private Coroutine activeCoroutine;
+
+    // Animator Parameter cachen
+    private static readonly int AnimWalking = Animator.StringToHash("isWalking");
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+
         agent.speed = walkSpeed;
+        agent.stoppingDistance = arrivalDistance;
+
+        // NavMesh soll nicht selbst rotieren
         agent.updateRotation = false;
+        agent.angularSpeed = 0f;
+
         GoToNextWaypoint();
     }
 
     void Update()
     {
+        if (!enableRotation) return;
+
+        // Sanfte Rotation nur beim Laufen (velocity-basiert)
         if (agent.velocity.sqrMagnitude > 0.01f)
         {
-            Quaternion targetRot = Quaternion.LookRotation(agent.velocity.normalized);
-            transform.rotation = Quaternion.RotateTowards(
-                transform.rotation,
-                targetRot,
-                rotationSpeed * Time.deltaTime
-            );
+            Vector3 flatVelocity = new Vector3(agent.velocity.x, 0f, agent.velocity.z);
+            if (flatVelocity.sqrMagnitude > 0.001f)
+            {
+                Quaternion targetRot = Quaternion.LookRotation(flatVelocity.normalized);
+                transform.rotation = Quaternion.RotateTowards(
+                    transform.rotation,
+                    targetRot,
+                    rotationSpeed * Time.deltaTime
+                );
+            }
         }
     }
 
+    // -----------------------------------------------------------------------
+    // Zentrale Steuerung
+    // -----------------------------------------------------------------------
     void GoToNextWaypoint()
     {
-        if (isPatrolling) return;
+        if (activeCoroutine != null)
+            StopCoroutine(activeCoroutine);
 
+        // Follow-Modus prüfen
         if (followFromWaypointIndex >= 0 && currentWaypoint >= followFromWaypointIndex)
         {
-            if (followTarget != null && !isFollowing)
-            {
-                isFollowing = true;
-                StartCoroutine(FollowRoutine());
-            }
+            if (followTarget != null)
+                activeCoroutine = StartCoroutine(FollowRoutine());
             return;
         }
 
         if (waypoints.Length == 0) return;
 
-        isPatrolling = true;
         int targetIndex = currentWaypoint;
         currentWaypoint = (currentWaypoint + 1) % waypoints.Length;
-        StartCoroutine(PatrolRoutine(waypoints[targetIndex].position, targetIndex));
+        activeCoroutine = StartCoroutine(PatrolRoutine(waypoints[targetIndex], targetIndex));
     }
 
-    IEnumerator PatrolRoutine(Vector3 target, int waypointIndex)
+    // -----------------------------------------------------------------------
+    // Patrol
+    // -----------------------------------------------------------------------
+    IEnumerator PatrolRoutine(Transform waypointTransform, int waypointIndex)
     {
-        // --- Phase 1: Drehen ---
-        animator.SetBool("isWalking", false);
-        agent.ResetPath();
+        Vector3 target = waypointTransform.position;
 
-        Vector3 direction = (target - transform.position).normalized;
-        direction.y = 0;
-        Quaternion targetRotation = Quaternion.LookRotation(direction);
-
-        while (Quaternion.Angle(transform.rotation, targetRotation) > 5f)
-        {
-            transform.rotation = Quaternion.RotateTowards(
-                transform.rotation,
-                targetRotation,
-                rotationSpeed * Time.deltaTime
-            );
-            yield return null;
-        }
-
-        // --- Phase 2: Laufen ---
-        animator.SetBool("isWalking", true);
+        // --- Phase 1: Laufen ---
+        SetWalking(true);
         agent.SetDestination(target);
 
+        yield return new WaitUntil(() => !agent.pathPending);
+
         yield return new WaitUntil(() =>
-            !agent.pathPending &&
-            agent.remainingDistance <= agent.stoppingDistance
+            agent.remainingDistance <= arrivalDistance &&
+            agent.velocity.sqrMagnitude < arrivalVelocityThreshold * arrivalVelocityThreshold
         );
 
-        // --- Phase 3: Warten ---
-        animator.SetBool("isWalking", false);
         agent.ResetPath();
+        SetWalking(false);
 
-        Quaternion waypointRotation = waypoints[waypointIndex].rotation;
-        if (Quaternion.Angle(transform.rotation, waypointRotation) > 5f)
+        // --- Phase 2: Rotation zum Waypoint (optional) ---
+        if (enableRotation)
         {
-            while (Quaternion.Angle(transform.rotation, waypointRotation) > 2f)
-            {
-                transform.rotation = Quaternion.RotateTowards(
-                    transform.rotation,
-                    waypointRotation,
-                    rotationSpeed * Time.deltaTime
-                );
-                yield return null;
-            }
+            yield return StartCoroutine(RotateTo(waypointTransform.rotation));
         }
 
+        // --- Phase 3: Warten ---
         float wait = waitTimeAtWaypoint;
-        Waypoint wp = waypoints[waypointIndex].GetComponent<Waypoint>();
+        Waypoint wp = waypointTransform.GetComponent<Waypoint>();
         if (wp != null && wp.customWaitTime >= 0f)
             wait = wp.customWaitTime;
 
         yield return new WaitForSeconds(wait);
 
-        // --- Weiter ---
-        isPatrolling = false;
         GoToNextWaypoint();
     }
 
+    // -----------------------------------------------------------------------
+    // Follow
+    // -----------------------------------------------------------------------
     IEnumerator FollowRoutine()
     {
         float elapsed = 0f;
 
-        while (isFollowing)
+        while (true)
         {
             if (followDuration > 0f)
             {
@@ -151,35 +159,37 @@ public class GuardPatrol : MonoBehaviour
 
             if (followTarget == null)
             {
-                animator.SetBool("isWalking", false);
-                agent.ResetPath();
+                StopMoving();
                 yield break;
             }
 
-            float distanceToTarget = Vector3.Distance(transform.position, followTarget.position);
+            float dist = Vector3.Distance(transform.position, followTarget.position);
 
-            if (distanceToTarget > followDistance + 0.2f)
+            if (dist > followDistance + 0.25f)
             {
                 Vector3 dirToSelf = (transform.position - followTarget.position).normalized;
-                Vector3 destination = followTarget.position + dirToSelf * followDistance;
-                agent.SetDestination(destination);
-                animator.SetBool("isWalking", true);
+                agent.SetDestination(followTarget.position + dirToSelf * followDistance);
+                SetWalking(true);
             }
             else
             {
                 agent.ResetPath();
-                animator.SetBool("isWalking", false);
+                SetWalking(false);
 
-                Vector3 lookDir = (followTarget.position - transform.position).normalized;
-                lookDir.y = 0;
-                if (lookDir.sqrMagnitude > 0.001f)
+                // Nur rotieren wenn Rotation aktiviert ist
+                if (enableRotation)
                 {
-                    Quaternion targetRot = Quaternion.LookRotation(lookDir);
-                    transform.rotation = Quaternion.RotateTowards(
-                        transform.rotation,
-                        targetRot,
-                        rotationSpeed * Time.deltaTime
-                    );
+                    Vector3 lookDir = (followTarget.position - transform.position).normalized;
+                    lookDir.y = 0;
+                    if (lookDir.sqrMagnitude > 0.001f)
+                    {
+                        Quaternion targetRot = Quaternion.LookRotation(lookDir);
+                        transform.rotation = Quaternion.RotateTowards(
+                            transform.rotation,
+                            targetRot,
+                            rotationSpeed * Time.deltaTime
+                        );
+                    }
                 }
             }
 
@@ -187,10 +197,41 @@ public class GuardPatrol : MonoBehaviour
         }
     }
 
+    // -----------------------------------------------------------------------
+    // Hilfsmethoden
+    // -----------------------------------------------------------------------
+    IEnumerator RotateTo(Quaternion target, float threshold = 2f)
+    {
+        while (Quaternion.Angle(transform.rotation, target) > threshold)
+        {
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                target,
+                rotationSpeed * Time.deltaTime
+            );
+            yield return null;
+        }
+        transform.rotation = target;
+    }
+
+    void SetWalking(bool walking)
+    {
+        animator.SetBool(AnimWalking, walking);
+    }
+
+    void StopMoving()
+    {
+        agent.ResetPath();
+        SetWalking(false);
+    }
+
     public void StopFollowing()
     {
-        isFollowing = false;
-        agent.ResetPath();
-        animator.SetBool("isWalking", false);
+        StopMoving();
+        if (activeCoroutine != null)
+        {
+            StopCoroutine(activeCoroutine);
+            activeCoroutine = null;
+        }
     }
 }
