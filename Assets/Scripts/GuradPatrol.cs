@@ -12,10 +12,23 @@ public class GuardPatrol : MonoBehaviour
     public float walkSpeed = 1.5f;
     public float rotationSpeed = 300f;
 
+    [Header("Follow Mode")]
+    [Tooltip("Ab diesem Waypoint-Index wird in den Follow-Modus gewechselt. -1 = kein Follow-Modus.")]
+    public int followFromWaypointIndex = -1;
+    [Tooltip("Das Transform das verfolgt werden soll (anderer NPC oder Spieler).")]
+    public Transform followTarget;
+    [Tooltip("Abstand den der NPC zum Ziel hält.")]
+    public float followDistance = 2f;
+    [Tooltip("Wie oft pro Sekunde das Ziel neu angesteuert wird.")]
+    public float followUpdateRate = 0.1f;
+    [Tooltip("Wie lange der Follow-Modus aktiv bleibt in Sekunden. 0 = unendlich.")]
+    public float followDuration = 0f;
+
     private NavMeshAgent agent;
     private Animator animator;
     private int currentWaypoint = 0;
     private bool isPatrolling = false;
+    private bool isFollowing = false;
 
     void Start()
     {
@@ -41,14 +54,24 @@ public class GuardPatrol : MonoBehaviour
 
     void GoToNextWaypoint()
     {
-        if (waypoints.Length == 0 || isPatrolling) return;
-        isPatrolling = true;
+        if (isPatrolling) return;
 
-        Vector3 nextPos = waypoints[currentWaypoint].position;
+        if (followFromWaypointIndex >= 0 && currentWaypoint >= followFromWaypointIndex)
+        {
+            if (followTarget != null && !isFollowing)
+            {
+                isFollowing = true;
+                StartCoroutine(FollowRoutine());
+            }
+            return;
+        }
+
+        if (waypoints.Length == 0) return;
+
+        isPatrolling = true;
         int targetIndex = currentWaypoint;
         currentWaypoint = (currentWaypoint + 1) % waypoints.Length;
-
-        StartCoroutine(PatrolRoutine(nextPos, targetIndex));
+        StartCoroutine(PatrolRoutine(waypoints[targetIndex].position, targetIndex));
     }
 
     IEnumerator PatrolRoutine(Vector3 target, int waypointIndex)
@@ -98,16 +121,76 @@ public class GuardPatrol : MonoBehaviour
             }
         }
 
-        // Custom- oder Standardwartezeit ermitteln
         float wait = waitTimeAtWaypoint;
         Waypoint wp = waypoints[waypointIndex].GetComponent<Waypoint>();
-				if (wp != null && wp.customWaitTime >= 0f)
-				    wait = wp.customWaitTime;
+        if (wp != null && wp.customWaitTime >= 0f)
+            wait = wp.customWaitTime;
 
         yield return new WaitForSeconds(wait);
 
         // --- Weiter ---
         isPatrolling = false;
         GoToNextWaypoint();
+    }
+
+    IEnumerator FollowRoutine()
+    {
+        float elapsed = 0f;
+
+        while (isFollowing)
+        {
+            if (followDuration > 0f)
+            {
+                elapsed += followUpdateRate;
+                if (elapsed >= followDuration)
+                {
+                    StopFollowing();
+                    yield break;
+                }
+            }
+
+            if (followTarget == null)
+            {
+                animator.SetBool("isWalking", false);
+                agent.ResetPath();
+                yield break;
+            }
+
+            float distanceToTarget = Vector3.Distance(transform.position, followTarget.position);
+
+            if (distanceToTarget > followDistance + 0.2f)
+            {
+                Vector3 dirToSelf = (transform.position - followTarget.position).normalized;
+                Vector3 destination = followTarget.position + dirToSelf * followDistance;
+                agent.SetDestination(destination);
+                animator.SetBool("isWalking", true);
+            }
+            else
+            {
+                agent.ResetPath();
+                animator.SetBool("isWalking", false);
+
+                Vector3 lookDir = (followTarget.position - transform.position).normalized;
+                lookDir.y = 0;
+                if (lookDir.sqrMagnitude > 0.001f)
+                {
+                    Quaternion targetRot = Quaternion.LookRotation(lookDir);
+                    transform.rotation = Quaternion.RotateTowards(
+                        transform.rotation,
+                        targetRot,
+                        rotationSpeed * Time.deltaTime
+                    );
+                }
+            }
+
+            yield return new WaitForSeconds(followUpdateRate);
+        }
+    }
+
+    public void StopFollowing()
+    {
+        isFollowing = false;
+        agent.ResetPath();
+        animator.SetBool("isWalking", false);
     }
 }
