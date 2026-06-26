@@ -4,6 +4,11 @@ using System.Collections;
 using System.Linq;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using Unity.XR.CoreUtils;
+using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Locomotion.Teleportation;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
+using UnityEngine.XR.Interaction.Toolkit.Interactors.Visuals;
 
 public class LoadingScreenManager : MonoBehaviour
 {
@@ -17,13 +22,16 @@ public class LoadingScreenManager : MonoBehaviour
     public string firstScene = "Terrain";
     public string firstEntranceId = "default";
 
-    [Header("Player")]
+    [Header("Player & XR")]
     public GameObject playerObject;
-		public Camera mainCamera;
+    public Camera mainCamera;
+    public XROrigin xrOrigin;
+    public TeleportationProvider teleportProvider;
 
     [Header("Global Volume")]
     public Volume globalVolume;
 
+    private XRInteractionManager interactionManager;
     private bool isLoading = false;
     private LoadingScreenUI ui;
     private RandomBackgroundMusic music;
@@ -38,7 +46,6 @@ public class LoadingScreenManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
-            return;
         }
     }
 
@@ -47,8 +54,29 @@ public class LoadingScreenManager : MonoBehaviour
         ui = FindFirstObjectByType<LoadingScreenUI>(FindObjectsInactive.Include);
         music = FindFirstObjectByType<RandomBackgroundMusic>(FindObjectsInactive.Include);
 
+        if (xrOrigin == null) xrOrigin = FindFirstObjectByType<XROrigin>();
+        if (teleportProvider == null) teleportProvider = FindFirstObjectByType<TeleportationProvider>();
+
+        CreateInteractionManagerIfMissing();
+
         playerObject.SetActive(true);
         StartCoroutine(LoadFirstScene());
+    }
+
+    private void CreateInteractionManagerIfMissing()
+    {
+        interactionManager = FindFirstObjectByType<XRInteractionManager>();
+
+        if (interactionManager == null)
+        {
+            GameObject managerObj = new GameObject("XR Interaction Manager");
+            interactionManager = managerObj.AddComponent<XRInteractionManager>();
+            DontDestroyOnLoad(managerObj);
+        }
+        else
+        {
+            DontDestroyOnLoad(interactionManager.gameObject);
+        }
     }
 
     public void LoadScene(string targetScene, string entranceId = "default")
@@ -69,23 +97,16 @@ public class LoadingScreenManager : MonoBehaviour
     IEnumerator LoadFirstScene()
     {
         yield return StartCoroutine(ui.FadeIn(fadeTime));
-
-        if (music != null)
-            StartCoroutine(music.FadeIn(fadeTime));
+        if (music != null) StartCoroutine(music.FadeIn(fadeTime));
 
         AsyncOperation load = SceneManager.LoadSceneAsync(firstScene, LoadSceneMode.Additive);
         load.allowSceneActivation = false;
 
         float timer = 0f;
-
-        while (true)
+        while (timer < minStartLoadTime || load.progress < 0.9f)
         {
             timer += Time.deltaTime;
             ui?.SetProgress(Mathf.Clamp01(load.progress / 0.9f));
-
-            if (load.progress >= 0.9f && timer >= minStartLoadTime)
-                break;
-
             yield return null;
         }
 
@@ -97,16 +118,13 @@ public class LoadingScreenManager : MonoBehaviour
 
         Scene loadedScene = SceneManager.GetSceneAt(SceneManager.sceneCount - 1);
 
-        if (music != null)
-            StartCoroutine(music.FadeOut(fadeTime));
-
+        if (music != null) StartCoroutine(music.FadeOut(fadeTime));
         yield return StartCoroutine(ui.FadeOut(fadeTime));
         yield return new WaitForSeconds(fadeTime);
 
         SceneManager.SetActiveScene(loadedScene);
-        TeleportPlayerToEntrance(loadedScene, firstEntranceId);
+        yield return StartCoroutine(TeleportToEntrance(loadedScene, firstEntranceId));
 
-        playerObject.SetActive(true);
         DisableLoadingScreen();
     }
 
@@ -116,64 +134,14 @@ public class LoadingScreenManager : MonoBehaviour
     IEnumerator LoadSceneCoroutine(string targetScene, string entranceId)
     {
         isLoading = true;
-
         EnableLoadingScreen(false);
 
-        Scene currentScene = SceneManager.GetActiveScene();
-        yield return SceneManager.UnloadSceneAsync(currentScene);
+        ForceReleaseAllInteractions();
+        yield return UnloadCurrentScene();
 
-        TeleportPlayerToEntrance(loadingSceneName, "default");
+        TeleportPlayerToLoadingScreen();
 
-        yield return StartCoroutine(ui.FadeIn(fadeTime));
-
-        if (music != null)
-            StartCoroutine(music.FadeIn(fadeTime));
-
-        AsyncOperation load = SceneManager.LoadSceneAsync(targetScene, LoadSceneMode.Additive);
-        load.allowSceneActivation = false;
-
-        float timer = 0f;
-
-        while (true)
-        {
-            timer += Time.deltaTime;
-            ui?.SetProgress(Mathf.Clamp01(load.progress / 0.9f));
-
-            if (load.progress >= 0.9f && timer >= minLoadTime)
-                break;
-
-            yield return null;
-        }
-
-        ui?.SetProgress(1f);
-
-        load.allowSceneActivation = true;
-        yield return load;
-
-        // Scene per Index holen statt GetSceneByName — funktioniert auch bei wiederholtem Laden
-        Scene loadedScene = SceneManager.GetSceneAt(SceneManager.sceneCount - 1);
-
-        float warmupTime = 0f;
-        while (warmupTime < 0.5f)
-        {
-            warmupTime += Time.unscaledDeltaTime;
-            yield return new WaitForFixedUpdate();
-        }
-
-        yield return null;
-
-        if (music != null)
-            StartCoroutine(music.FadeOut(fadeTime));
-
-        yield return StartCoroutine(ui.FadeOut(fadeTime));
-        yield return new WaitForSeconds(fadeTime);
-
-        SceneManager.SetActiveScene(loadedScene);
-        TeleportPlayerToEntrance(loadedScene, entranceId);
-
-        playerObject.SetActive(true);
-        DisableLoadingScreen();
-
+        yield return StartCoroutine(PerformLoadSequence(targetScene, entranceId, true));
         isLoading = false;
     }
 
@@ -184,127 +152,162 @@ public class LoadingScreenManager : MonoBehaviour
     {
         isLoading = true;
         EnablePostProcessing();
-
         EnableLoadingScreen(true);
 
-        Scene currentScene = SceneManager.GetActiveScene();
-        yield return SceneManager.UnloadSceneAsync(currentScene);
+        ForceReleaseAllInteractions();
+        yield return UnloadCurrentScene();
 
-        TeleportPlayerToEntrance(loadingSceneName, "default");
+        TeleportPlayerToLoadingScreen();
 
-        if (music != null)
-            StartCoroutine(music.FadeIn(fadeTime * 2));
+        yield return StartCoroutine(PerformLoadSequence(targetScene, entranceId, true, 2f));
+        isLoading = false;
+    }
+
+    private IEnumerator PerformLoadSequence(string targetScene, string entranceId, bool useMusicFadeIn, float fadeInMultiplier = 1f)
+    {
+        if (useMusicFadeIn && music != null)
+            StartCoroutine(music.FadeIn(fadeTime * fadeInMultiplier));
 
         AsyncOperation load = SceneManager.LoadSceneAsync(targetScene, LoadSceneMode.Additive);
         load.allowSceneActivation = false;
 
         float timer = 0f;
-
-        while (true)
+        while (timer < minLoadTime || load.progress < 0.9f)
         {
             timer += Time.deltaTime;
             ui?.SetProgress(Mathf.Clamp01(load.progress / 0.9f));
-
-            if (load.progress >= 0.9f && timer >= minLoadTime)
-                break;
-
             yield return null;
         }
 
         ui?.SetProgress(1f);
-
         load.allowSceneActivation = true;
         yield return load;
 
-        // Scene per Index holen statt GetSceneByName — funktioniert auch bei wiederholtem Laden
         Scene loadedScene = SceneManager.GetSceneAt(SceneManager.sceneCount - 1);
 
-        float warmupTime = 0f;
-        while (warmupTime < 0.5f)
-        {
-            warmupTime += Time.unscaledDeltaTime;
-            yield return new WaitForFixedUpdate();
-        }
-
-        yield return null;
-
-        if (music != null)
-            StartCoroutine(music.FadeOut(fadeTime));
-
+        if (music != null) StartCoroutine(music.FadeOut(fadeTime));
+        yield return StartCoroutine(ui.FadeOut(fadeTime));
         yield return new WaitForSeconds(fadeTime);
 
         SceneManager.SetActiveScene(loadedScene);
-        TeleportPlayerToEntrance(loadedScene, entranceId);
+        yield return StartCoroutine(TeleportToEntrance(loadedScene, entranceId));
 
-        playerObject.SetActive(true);
         DisableLoadingScreen();
+    }
 
-        isLoading = false;
+    private IEnumerator UnloadCurrentScene()
+    {
+        Scene currentScene = SceneManager.GetActiveScene();
+        yield return SceneManager.UnloadSceneAsync(currentScene);
     }
 
     // =========================
-    // PLAYER TELEPORT
+    // INTERACTION CLEANUP
     // =========================
-
-    // Überladung mit Scene-Objekt (primär — zuverlässig bei wiederholtem Laden)
-    void TeleportPlayerToEntrance(Scene scene, string entranceId)
-		{
-		    if (!scene.IsValid() || !scene.isLoaded)
-		    {
-		        Debug.LogWarning($"TeleportPlayerToEntrance: Scene '{scene.name}' ist nicht gültig oder nicht geladen.");
-		        return;
-		    }
-		
-		    SceneEntrance targetEntrance = null;
-		    SceneEntrance fallback = null;
-		
-		    foreach (GameObject root in scene.GetRootGameObjects())
-		    {
-		        foreach (SceneEntrance entrance in root.GetComponentsInChildren<SceneEntrance>())
-		        {
-		            if (entrance.entranceId == entranceId)
-		            {
-		                targetEntrance = entrance;
-		                break;
-		            }
-		
-		            if (entrance.entranceId == "default")
-		                fallback = entrance;
-		        }
-		
-		        if (targetEntrance != null) break;
-		    }
-		
-		    SceneEntrance spawn = targetEntrance ?? fallback;
-		
-		    if (spawn != null)
-		    {
-		        var cc = playerObject.GetComponent<CharacterController>();
-		        if (cc != null) cc.enabled = false;
-		
-		        // Camera-Offset berechnen (wie weit ist die Camera vom Origin versetzt)
-		        Vector3 cameraOffset = mainCamera.transform.position - playerObject.transform.position;
-						cameraOffset.y = 0;
-						
-						// Offset relativ zur Spawn-Rotation transformieren
-						Vector3 rotatedOffset = spawn.transform.rotation * Quaternion.Inverse(playerObject.transform.rotation) * cameraOffset;
-						
-						playerObject.transform.SetPositionAndRotation(
-						    spawn.transform.position - rotatedOffset,
-						    spawn.transform.rotation
-						);		
-		        if (cc != null) cc.enabled = true;
-		    }
-		    else
-		    {
-		        Debug.LogWarning($"Kein SceneEntrance mit id='{entranceId}' in '{scene.name}' gefunden.");
-		    }
-		}
-		
-    // Überladung mit Scene-Namen (für LoadingScreen-Teleport)
-    void TeleportPlayerToEntrance(string sceneName, string entranceId)
+    private void ForceReleaseAllInteractions()
     {
-        TeleportPlayerToEntrance(SceneManager.GetSceneByName(sceneName), entranceId);
+        if (interactionManager == null) return;
+
+        foreach (var interactor in FindObjectsByType<XRBaseInteractor>(FindObjectsSortMode.None))
+        {
+            if (interactor is IXRSelectInteractor select && select.hasSelection)
+                interactionManager.CancelInteractorSelection(select);
+
+            if (interactor is IXRHoverInteractor hover && hover.hasHover)
+                interactionManager.CancelInteractorHover(hover);
+
+            interactor.enabled = false;
+            interactor.enabled = true;
+        }
+    }
+
+    // =========================
+    // TELEPORT
+    // =========================
+    private IEnumerator TeleportToEntrance(Scene scene, string entranceId)
+    {
+        if (!scene.IsValid() || !scene.isLoaded)
+        {
+            Debug.LogWarning($"Scene '{scene.name}' nicht gültig.");
+            yield break;
+        }
+
+        SceneEntrance target = FindEntrance(scene, entranceId);
+        if (target == null)
+        {
+            Debug.LogWarning($"Kein SceneEntrance mit ID '{entranceId}' gefunden.");
+            yield break;
+        }
+
+        var cc = playerObject.GetComponent<CharacterController>();
+        if (cc != null) cc.enabled = false;
+
+        Vector3 cameraOffset = mainCamera.transform.localPosition;
+        cameraOffset.y = 0f;
+
+        Vector3 destinationPosition = target.transform.position - cameraOffset;
+        Quaternion destinationRotation = target.transform.rotation;
+
+        var request = new TeleportRequest
+        {
+            destinationPosition = destinationPosition,
+            destinationRotation = destinationRotation,
+            requestTime = Time.time,
+            matchOrientation = MatchOrientation.TargetUpAndForward
+        };
+
+        teleportProvider.QueueTeleportRequest(request);
+
+        yield return new WaitForSeconds(0.2f);
+
+        ResetAllInteractors();
+
+        if (cc != null) cc.enabled = true;
+        Physics.SyncTransforms();
+    }
+
+    private void TeleportPlayerToLoadingScreen()
+    {
+        StartCoroutine(TeleportToEntrance(SceneManager.GetSceneByName(loadingSceneName), "default"));
+    }
+
+    private SceneEntrance FindEntrance(Scene scene, string entranceId)
+    {
+        SceneEntrance fallback = null;
+        foreach (GameObject root in scene.GetRootGameObjects())
+        {
+            foreach (var entrance in root.GetComponentsInChildren<SceneEntrance>(true))
+            {
+                if (entrance.entranceId == entranceId)
+                    return entrance;
+                if (entrance.entranceId == "default")
+                    fallback = entrance;
+            }
+        }
+        return fallback;
+    }
+
+    private void ResetAllInteractors()
+    {
+        foreach (var interactor in FindObjectsByType<XRBaseInteractor>(FindObjectsSortMode.None))
+        {
+            interactor.enabled = false;
+            interactor.enabled = true;
+        }
+
+        foreach (var visual in FindObjectsByType<XRInteractorLineVisual>(FindObjectsSortMode.None))
+        {
+            visual.enabled = false;
+            visual.enabled = true;
+            if (visual.reticle != null)
+                visual.reticle.gameObject.SetActive(true);
+        }
+
+        foreach (var nf in FindObjectsByType<NearFarInteractor>(FindObjectsSortMode.None))
+        {
+            nf.enabled = false;
+            nf.enabled = true;
+        }
     }
 
     // =========================
@@ -313,12 +316,10 @@ public class LoadingScreenManager : MonoBehaviour
     void EnableLoadingScreen(bool simple)
     {
         Scene loadingScene = SceneManager.GetSceneByName(loadingSceneName);
-
         foreach (GameObject go in loadingScene.GetRootGameObjects())
             go.SetActive(true);
 
-        foreach (var script in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-            .OfType<ILoadingScreenScript>())
+        foreach (var script in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ILoadingScreenScript>())
             script.OnLoadingScreenActivated();
     }
 
@@ -331,28 +332,10 @@ public class LoadingScreenManager : MonoBehaviour
     void DisableLoadingScreen()
     {
         Scene loadingScene = SceneManager.GetSceneByName(loadingSceneName);
-
         foreach (GameObject go in loadingScene.GetRootGameObjects())
         {
             if (go == playerObject) continue;
             go.SetActive(false);
-        }
-    }
-
-    // =========================
-    // PHYSICS PREWARM
-    // =========================
-    IEnumerator PrewarmPhysics(Scene scene)
-    {
-        var meshColliders = scene.GetRootGameObjects()
-            .SelectMany(go => go.GetComponentsInChildren<MeshCollider>(true))
-            .Where(mc => mc.sharedMesh != null);
-
-        foreach (var mc in meshColliders)
-        {
-            mc.enabled = false;
-            mc.enabled = true;
-            yield return null;
         }
     }
 }
