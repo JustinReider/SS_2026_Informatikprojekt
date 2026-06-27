@@ -32,6 +32,7 @@ public class LoadingScreenManager : MonoBehaviour
     public Volume globalVolume;
 
     private XRInteractionManager interactionManager;
+    private CharacterController characterController;
     private bool isLoading = false;
     private LoadingScreenUI ui;
     private RandomBackgroundMusic music;
@@ -57,6 +58,8 @@ public class LoadingScreenManager : MonoBehaviour
         if (xrOrigin == null) xrOrigin = FindFirstObjectByType<XROrigin>();
         if (teleportProvider == null) teleportProvider = FindFirstObjectByType<TeleportationProvider>();
 
+        characterController = playerObject.GetComponent<CharacterController>();
+
         CreateInteractionManagerIfMissing();
 
         playerObject.SetActive(true);
@@ -66,7 +69,6 @@ public class LoadingScreenManager : MonoBehaviour
     private void CreateInteractionManagerIfMissing()
     {
         interactionManager = FindFirstObjectByType<XRInteractionManager>();
-
         if (interactionManager == null)
         {
             GameObject managerObj = new GameObject("XR Interaction Manager");
@@ -81,14 +83,12 @@ public class LoadingScreenManager : MonoBehaviour
 
     public void LoadScene(string targetScene, string entranceId = "default")
     {
-        if (!isLoading)
-            StartCoroutine(LoadSceneCoroutine(targetScene, entranceId));
+        if (!isLoading) StartCoroutine(LoadSceneCoroutine(targetScene, entranceId));
     }
 
     public void SimpleLoadScene(string targetScene, string entranceId = "default")
     {
-        if (!isLoading)
-            StartCoroutine(SimpleLoadSceneCoroutine(targetScene, entranceId));
+        if (!isLoading) StartCoroutine(SimpleLoadSceneCoroutine(targetScene, entranceId));
     }
 
     // =========================
@@ -99,7 +99,7 @@ public class LoadingScreenManager : MonoBehaviour
         yield return StartCoroutine(ui.FadeIn(fadeTime));
         if (music != null) StartCoroutine(music.FadeIn(fadeTime));
 
-        AsyncOperation load = SceneManager.LoadSceneAsync(firstScene, LoadSceneMode.Additive);
+        var load = SceneManager.LoadSceneAsync(firstScene, LoadSceneMode.Additive);
         load.allowSceneActivation = false;
 
         float timer = 0f;
@@ -116,7 +116,7 @@ public class LoadingScreenManager : MonoBehaviour
         load.allowSceneActivation = true;
         yield return load;
 
-        Scene loadedScene = SceneManager.GetSceneAt(SceneManager.sceneCount - 1);
+        var loadedScene = SceneManager.GetSceneAt(SceneManager.sceneCount - 1);
 
         if (music != null) StartCoroutine(music.FadeOut(fadeTime));
         yield return StartCoroutine(ui.FadeOut(fadeTime));
@@ -129,14 +129,14 @@ public class LoadingScreenManager : MonoBehaviour
     }
 
     // =========================
-    // GENERIC SCENE LOAD
+    // NORMAL SCENE LOADS
     // =========================
     IEnumerator LoadSceneCoroutine(string targetScene, string entranceId)
     {
         isLoading = true;
         EnableLoadingScreen(false);
 
-        ForceReleaseAllInteractions();
+        PauseLocomotionScripts();
         yield return UnloadCurrentScene();
 
         TeleportPlayerToLoadingScreen();
@@ -145,16 +145,13 @@ public class LoadingScreenManager : MonoBehaviour
         isLoading = false;
     }
 
-    // =========================
-    // SIMPLE SCENE LOAD
-    // =========================
     IEnumerator SimpleLoadSceneCoroutine(string targetScene, string entranceId)
     {
         isLoading = true;
         EnablePostProcessing();
         EnableLoadingScreen(true);
 
-        ForceReleaseAllInteractions();
+        PauseLocomotionScripts();
         yield return UnloadCurrentScene();
 
         TeleportPlayerToLoadingScreen();
@@ -168,7 +165,7 @@ public class LoadingScreenManager : MonoBehaviour
         if (useMusicFadeIn && music != null)
             StartCoroutine(music.FadeIn(fadeTime * fadeInMultiplier));
 
-        AsyncOperation load = SceneManager.LoadSceneAsync(targetScene, LoadSceneMode.Additive);
+        var load = SceneManager.LoadSceneAsync(targetScene, LoadSceneMode.Additive);
         load.allowSceneActivation = false;
 
         float timer = 0f;
@@ -183,7 +180,7 @@ public class LoadingScreenManager : MonoBehaviour
         load.allowSceneActivation = true;
         yield return load;
 
-        Scene loadedScene = SceneManager.GetSceneAt(SceneManager.sceneCount - 1);
+        var loadedScene = SceneManager.GetSceneAt(SceneManager.sceneCount - 1);
 
         if (music != null) StartCoroutine(music.FadeOut(fadeTime));
         yield return StartCoroutine(ui.FadeOut(fadeTime));
@@ -197,28 +194,7 @@ public class LoadingScreenManager : MonoBehaviour
 
     private IEnumerator UnloadCurrentScene()
     {
-        Scene currentScene = SceneManager.GetActiveScene();
-        yield return SceneManager.UnloadSceneAsync(currentScene);
-    }
-
-    // =========================
-    // INTERACTION CLEANUP
-    // =========================
-    private void ForceReleaseAllInteractions()
-    {
-        if (interactionManager == null) return;
-
-        foreach (var interactor in FindObjectsByType<XRBaseInteractor>(FindObjectsSortMode.None))
-        {
-            if (interactor is IXRSelectInteractor select && select.hasSelection)
-                interactionManager.CancelInteractorSelection(select);
-
-            if (interactor is IXRHoverInteractor hover && hover.hasHover)
-                interactionManager.CancelInteractorHover(hover);
-
-            interactor.enabled = false;
-            interactor.enabled = true;
-        }
+        yield return SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
     }
 
     // =========================
@@ -239,19 +215,16 @@ public class LoadingScreenManager : MonoBehaviour
             yield break;
         }
 
-        var cc = playerObject.GetComponent<CharacterController>();
+        PauseLocomotionScripts();
+
+        var cc = characterController;
         if (cc != null) cc.enabled = false;
 
-        Vector3 cameraOffset = mainCamera.transform.localPosition;
-        cameraOffset.y = 0f;
-
-        Vector3 destinationPosition = target.transform.position - cameraOffset;
-        Quaternion destinationRotation = target.transform.rotation;
-
+        // Einfache & zuverlässige Teleportation über den Provider
         var request = new TeleportRequest
         {
-            destinationPosition = destinationPosition,
-            destinationRotation = destinationRotation,
+            destinationPosition = target.transform.position,
+            destinationRotation = target.transform.rotation,
             requestTime = Time.time,
             matchOrientation = MatchOrientation.TargetUpAndForward
         };
@@ -261,10 +234,11 @@ public class LoadingScreenManager : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
 
         ResetAllInteractors();
+        ResumeLocomotionScripts();
 
         if (cc != null) cc.enabled = true;
         Physics.SyncTransforms();
-    }
+    }    
 
     private void TeleportPlayerToLoadingScreen()
     {
@@ -278,13 +252,35 @@ public class LoadingScreenManager : MonoBehaviour
         {
             foreach (var entrance in root.GetComponentsInChildren<SceneEntrance>(true))
             {
-                if (entrance.entranceId == entranceId)
-                    return entrance;
-                if (entrance.entranceId == "default")
-                    fallback = entrance;
+                if (entrance.entranceId == entranceId) return entrance;
+                if (entrance.entranceId == "default") fallback = entrance;
             }
         }
         return fallback;
+    }
+
+    private void PauseLocomotionScripts()
+    {
+        if (characterController != null) characterController.enabled = false;
+
+        foreach (var mb in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None))
+        {
+            string typeName = mb.GetType().Name;
+            if (typeName.Contains("WallPreventer") || typeName.Contains("Locomotion"))
+                mb.enabled = false;
+        }
+    }
+
+    private void ResumeLocomotionScripts()
+    {
+        if (characterController != null) characterController.enabled = true;
+
+        foreach (var mb in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None))
+        {
+            string typeName = mb.GetType().Name;
+            if (typeName.Contains("WallPreventer") || typeName.Contains("Locomotion"))
+                mb.enabled = true;
+        }
     }
 
     private void ResetAllInteractors()
@@ -299,8 +295,7 @@ public class LoadingScreenManager : MonoBehaviour
         {
             visual.enabled = false;
             visual.enabled = true;
-            if (visual.reticle != null)
-                visual.reticle.gameObject.SetActive(true);
+            if (visual.reticle != null) visual.reticle.gameObject.SetActive(true);
         }
 
         foreach (var nf in FindObjectsByType<NearFarInteractor>(FindObjectsSortMode.None))
@@ -311,7 +306,7 @@ public class LoadingScreenManager : MonoBehaviour
     }
 
     // =========================
-    // LOADING SCREEN CONTROL
+    // LOADING SCREEN
     // =========================
     void EnableLoadingScreen(bool simple)
     {

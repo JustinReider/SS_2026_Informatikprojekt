@@ -8,6 +8,8 @@ public class NextSceneCollider : MonoBehaviour
 
 		private void OnTriggerEnter(Collider other) {
     		// Szene laden
+				Debug.Log(other.CompareTag("Player"));
+				if (other.CompareTag("Player"))
 				LoadingScreenManager.Instance.SimpleLoadScene(sceneNameToLoad);
 		}
 }
