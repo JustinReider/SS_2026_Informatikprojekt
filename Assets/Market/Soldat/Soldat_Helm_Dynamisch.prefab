@@ -195,7 +195,7 @@ NavMeshAgent:
   m_AutoRepath: 1
   m_Height: 2
   m_BaseOffset: 0
-  m_WalkableMask: 4294967295
+  m_WalkableMask: 1
   m_ObstacleAvoidanceType: 4
 --- !u!114 &7103407337460728968
 MonoBehaviour:
@@ -212,7 +212,17 @@ MonoBehaviour:
   waypoints: []
   waitTimeAtWaypoint: 10
   walkSpeed: 1
+  enableRotation: 1
   rotationSpeed: 150
+  rotationAcceleration: 5
+  arrivalVelocityThreshold: 0.05
+  arrivalDistance: 0.25
+  waypointAudioSource: {fileID: 0}
+  followFromWaypointIndex: -1
+  followTarget: {fileID: 0}
+  followDistance: 2
+  followUpdateRate: 0.1
+  followDuration: 0
 --- !u!114 &6088586009077694663
 MonoBehaviour:
   m_ObjectHideFlags: 0

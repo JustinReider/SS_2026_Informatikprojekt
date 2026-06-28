@@ -10,11 +10,13 @@ public class NPCNavigator : MonoBehaviour
 
     [Header("Movement")]
     public float walkSpeed = 1.5f;
-    public float rotationSpeed = 300f;
 
     [Header("Rotation")]
-    [Tooltip("Wenn false, wird jegliche Rotation komplett deaktiviert. Der NPC behält dann seine Start-Rotation.")]
-    public bool enableRotation = true;
+		[Tooltip("Wenn false, wird jegliche Rotation komplett deaktiviert. Der NPC behält dann seine Start-Rotation.")]
+		public bool enableRotation = true;
+		public float rotationSpeed = 300f;
+		[Tooltip("Wie schnell die Rotationsgeschwindigkeit aufgebaut wird. Höherer Wert = direkter, niedrigerer Wert = weicher.")]
+		public float rotationAcceleration = 5f;
 
     [Header("Arrival Detection")]
     [Tooltip("Unter dieser Geschwindigkeit gilt der Agent als 'gestoppt'.")]
@@ -42,6 +44,7 @@ public class NPCNavigator : MonoBehaviour
     private Animator animator;
     private int currentWaypoint = 0;
     private Coroutine activeCoroutine;
+		private float currentRotationSpeed = 0f;
 
     private static readonly int AnimWalking = Animator.StringToHash("isWalking");
 
@@ -58,24 +61,32 @@ public class NPCNavigator : MonoBehaviour
         GoToNextWaypoint();
     }
 
-    void Update()
-    {
-        if (!enableRotation) return;
-
-        if (agent.velocity.sqrMagnitude > 0.01f)
-        {
-            Vector3 flatVelocity = new Vector3(agent.velocity.x, 0f, agent.velocity.z);
-            if (flatVelocity.sqrMagnitude > 0.001f)
-            {
-                Quaternion targetRot = Quaternion.LookRotation(flatVelocity.normalized);
-                transform.rotation = Quaternion.RotateTowards(
-                    transform.rotation,
-                    targetRot,
-                    rotationSpeed * Time.deltaTime
-                );
-            }
-        }
-    }
+    
+		void Update()
+		{
+		    if (!enableRotation) return;
+		
+		    if (agent.velocity.sqrMagnitude > 0.01f)
+		    {
+		        Vector3 flatVelocity = new Vector3(agent.velocity.x, 0f, agent.velocity.z);
+		        if (flatVelocity.sqrMagnitude > 0.001f)
+		        {
+		            currentRotationSpeed = Mathf.Lerp(currentRotationSpeed, rotationSpeed, rotationAcceleration * Time.deltaTime);
+		
+		            Quaternion targetRot = Quaternion.LookRotation(flatVelocity.normalized);
+		            transform.rotation = Quaternion.RotateTowards(
+		                transform.rotation,
+		                targetRot,
+		                currentRotationSpeed * Time.deltaTime
+		            );
+		        }
+		    }
+		    else
+		    {
+		        // Geschwindigkeit zurücksetzen wenn NPC steht
+		        currentRotationSpeed = 0f;
+		    }
+		}
 
     // -----------------------------------------------------------------------
     // Zentrale Steuerung
