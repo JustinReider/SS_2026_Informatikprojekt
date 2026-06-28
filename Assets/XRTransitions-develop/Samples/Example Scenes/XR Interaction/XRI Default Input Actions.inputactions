@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "XRI Default Input Actions",
     "maps": [
         {
@@ -729,7 +730,7 @@
                     "name": "Select",
                     "type": "Button",
                     "id": "ac96c10b-c955-4a46-8e67-bf16bc069b53",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -1003,7 +1004,7 @@
                     "name": "Teleport Mode Cancel",
                     "type": "Button",
                     "id": "d587b60c-39a0-4365-8075-477ce484ba0f",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -1030,44 +1031,11 @@
             "bindings": [
                 {
                     "name": "",
-                    "id": "919c4a6c-22ed-4083-8e14-f30e91ff59fe",
-                    "path": "<XRController>{RightHand}/Primary2DAxis",
-                    "interactions": "Sector(directions=-1,sweepBehavior=3)",
-                    "processors": "",
-                    "groups": "Generic XR Controller",
-                    "action": "Teleport Select",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "62690862-4688-4010-975b-b3d9c6062157",
-                    "path": "<XRController>{RightHand}/Primary2DAxis",
-                    "interactions": "Sector(directions=1)",
-                    "processors": "",
-                    "groups": "Generic XR Controller",
-                    "action": "Teleport Mode Activate",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "de466e6e-12bf-46a1-b0fd-ffbc343f3399",
-                    "path": "<XRController>{RightHand}/gripPressed",
+                    "id": "d18fa1bf-0a3a-49b8-b95e-fecb3290182c",
+                    "path": "<XRController>{RightHand}/{Primary2DAxis}",
                     "interactions": "",
-                    "processors": "",
-                    "groups": "Generic XR Controller",
-                    "action": "Teleport Mode Cancel",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "d6c08c3d-3d41-4695-994d-1ac9016a5a9e",
-                    "path": "<XRController>{RightHand}/Primary2DAxis",
-                    "interactions": "Sector(directions=12,sweepBehavior=1),Sector(directions=2,sweepBehavior=2)",
-                    "processors": "",
-                    "groups": "Generic XR Controller",
+                    "processors": "StickDeadzone",
+                    "groups": "Continuous Move",
                     "action": "Turn",
                     "isComposite": false,
                     "isPartOfComposite": false
