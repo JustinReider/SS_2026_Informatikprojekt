@@ -1,141 +1,116 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR;
-using Unity.XR.CoreUtils;
+
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 /// <summary>
-/// HMD Position Reset / Recenter für Unity XR Rig (XRI 2.x / 3.x)
-/// 
-/// Zentriert den Spieler so, dass:
-///   - die Kamera an der definierten Zielposition landet
-///   - die Blickrichtung (Yaw) des HMDs als neue Vorwärts-Richtung übernommen wird
-///   - die Y-Achse (Höhe) unverändert bleibt
+/// HMD Recenter: Verschiebt das XR Origin so, dass die Kamera (HMD)
+/// genau an der recenterTargetPosition landet — analog zur Teleportlogik
+/// die den Camera-Offset vom Origin abzieht.
 ///
 /// Setup:
-///   1. Script auf ein beliebiges GameObject ziehen (z.B. XR Origin selbst)
-///   2. xrOrigin-Referenz im Inspector setzen (oder wird per FindFirstObjectByType gefunden)
-///   3. recenterTarget = Transform, an dem der Spieler nach dem Reset stehen soll
-///      (leer lassen = Reset an aktueller XZ-Position, nur Rotation wird korrigiert)
-///   4. Trigger: RecenterHMD() per Code aufrufen, oder InputAction im Inspector binden
-///
-/// Auslösen per Controller-Button:
-///   Entweder direkt per InputAction (recenterAction im Inspector befüllen)
-///   oder RecenterHMD() per UnityEvent / anderen Script-Aufruf triggern.
+///   - Script auf das XR Origin GameObject legen.
+///   - xrCamera: Camera unter dem Camera Offset zuweisen.
+///   - recenterTargetPosition: Transform an dem der Spieler nach dem Recenter steht.
+///     Wenn leer → nur Yaw-Rotation wird korrigiert, Position bleibt.
 /// </summary>
 public class HMDRecenter : MonoBehaviour
 {
-    [Header("Referenzen")]
-    [Tooltip("Das XROrigin-GameObject. Wird automatisch gesucht wenn leer.")]
-    public XROrigin xrOrigin;
+    [Header("References")]
+    [Tooltip("Die XR Camera (Kind des Camera Offset im XR Origin).")]
+    public Transform xrCamera;
 
-    [Tooltip("Optional: Zielpunkt, wo der Spieler nach dem Reset stehen soll (XZ). " +
-             "Leer = aktuelle XZ-Position beibehalten, nur Yaw wird korrigiert.")]
-    public Transform recenterTarget;
+    [Header("Recenter Target (optional)")]
+    [Tooltip("Weltposition, auf die die KAMERA (nicht das Origin) gesetzt wird. " +
+             "Leer lassen = nur Rotation korrigieren.")]
+    public Transform recenterTargetPosition;
 
-    [Header("Einstellungen")]
-    [Tooltip("Yaw (Horizontalrotation) der Kamera als neue Vorwärts-Richtung übernehmen.")]
-    public bool matchCameraForward = true;
+    [Header("Optionen")]
+    [Tooltip("Yaw des HMDs als neue Vorwärtsrichtung setzen.")]
+    public bool recenterRotation = true;
 
-    [Tooltip("Spieler auf XZ-Position des recenterTarget teleportieren (nur wenn Target gesetzt).")]
-    public bool matchTargetPosition = true;
+    [Header("Input")]
+    public bool useMenuButton = true;
+    public KeyCode editorKey = KeyCode.R;
 
-    [Header("Input (optional)")]
-    [Tooltip("InputAction für den Recenter-Button. Kann auch per Code aufgerufen werden.")]
-    public UnityEngine.InputSystem.InputAction recenterAction;
+    // ── Private ───────────────────────────────────────────────────────────────
 
-    // -----------------------------------------------------------------------
+    private bool _menuWasPressed;
+
+    // ── Unity ─────────────────────────────────────────────────────────────────
 
     private void Awake()
     {
-        if (xrOrigin == null)
-            xrOrigin = FindFirstObjectByType<XROrigin>();
-
-        if (xrOrigin == null)
-            Debug.LogError("[HMDRecenter] Kein XROrigin gefunden! Bitte im Inspector setzen.");
-    }
-
-    private void OnEnable()
-    {
-        if (recenterAction != null)
+        if (xrCamera == null)
         {
-            recenterAction.performed += _ => RecenterHMD();
-            recenterAction.Enable();
+            var cam = GetComponentInChildren<Camera>();
+            if (cam != null) xrCamera = cam.transform;
+            else Debug.LogError("[HMDRecenter] Keine Camera gefunden — xrCamera manuell zuweisen.");
         }
     }
-
-    private void OnDisable()
-    {
-        if (recenterAction != null)
-        {
-            recenterAction.performed -= _ => RecenterHMD();
-            recenterAction.Disable();
-        }
-    }
-
-    // -----------------------------------------------------------------------
-    // Öffentliche Methode — kann von beliebigem anderen Script aufgerufen werden,
-    // z.B. aus eurem Voice2Action-System oder einem UnityEvent-Button
-    // -----------------------------------------------------------------------
-    public void RecenterHMD()
-    {
-        if (xrOrigin == null)
-        {
-            Debug.LogWarning("[HMDRecenter] Kein XROrigin — Recenter abgebrochen.");
-            return;
-        }
-
-        Camera hmdCamera = xrOrigin.Camera;
-        if (hmdCamera == null)
-        {
-            Debug.LogWarning("[HMDRecenter] XROrigin.Camera ist null.");
-            return;
-        }
-
-        // --- Schritt 1: Position zentrieren ---
-        // Kamera soll an Zielposition landen (XZ), Y kommt vom Tracking selbst.
-        if (matchTargetPosition && recenterTarget != null)
-        {
-            // Zielposition: XZ vom Target, Y bleibt wie aktuell (Floor-Tracking)
-            Vector3 targetPos = new Vector3(
-                recenterTarget.position.x,
-                hmdCamera.transform.position.y,   // Y nicht anfassen
-                recenterTarget.position.z
-            );
-            xrOrigin.MoveCameraToWorldLocation(targetPos);
-        }
-
-        // --- Schritt 2: Yaw-Rotation korrigieren ---
-        // Nur horizontale Vorwärtsrichtung der Kamera übernehmen (kein Pitch/Roll)
-        if (matchCameraForward)
-        {
-            Vector3 cameraForwardFlat = hmdCamera.transform.forward;
-            cameraForwardFlat.y = 0f;
-
-            if (cameraForwardFlat.sqrMagnitude > 0.001f)
-            {
-                cameraForwardFlat.Normalize();
-
-                // MatchOriginUpCameraForward dreht das XROrigin so, dass
-                // die Kamera in cameraForwardFlat-Richtung schaut
-                xrOrigin.MatchOriginUpCameraForward(Vector3.up, cameraForwardFlat);
-            }
-        }
-
-        Debug.Log("[HMDRecenter] Recentered.");
-    }
-
-    // -----------------------------------------------------------------------
-    // Convenience: auch per Tastatur testbar im Editor
-    // -----------------------------------------------------------------------
-#if UNITY_EDITOR
-    [Header("Editor-Test")]
-    [Tooltip("Tastenkürzel zum Testen im Play-Mode (nur Editor)")]
-    public KeyCode editorTestKey = KeyCode.R;
 
     private void Update()
     {
-        if (Input.GetKeyDown(editorTestKey))
-            RecenterHMD();
+        if (ShouldRecenter())
+            PerformRecenter();
     }
+
+    // ── Input ─────────────────────────────────────────────────────────────────
+
+    private bool ShouldRecenter()
+    {
+#if ENABLE_INPUT_SYSTEM
+        if (Keyboard.current != null && Keyboard.current[Key.R].wasPressedThisFrame)
+            return true;
+#else
+        if (Input.GetKeyDown(editorKey)) return true;
 #endif
+
+        if (useMenuButton)
+        {
+            var left = InputDevices.GetDeviceAtXRNode(XRNode.LeftHand);
+            left.TryGetFeatureValue(UnityEngine.XR.CommonUsages.menuButton, out bool pressed);
+            bool risingEdge = pressed && !_menuWasPressed;
+            _menuWasPressed = pressed;
+            if (risingEdge) return true;
+        }
+
+        return false;
+    }
+
+    // ── Core ──────────────────────────────────────────────────────────────────
+
+    public void PerformRecenter()
+    {
+        if (xrCamera == null) return;
+
+        // 1. Rotation: Origin so drehen, dass HMD-Yaw = neue Vorwärtsrichtung.
+        //    Drehen um HMD-Position als Pivot, damit keine Positionsverschiebung entsteht.
+        if (recenterRotation)
+        {
+            float hmdYaw    = xrCamera.eulerAngles.y;
+            float originYaw = transform.eulerAngles.y;
+            transform.RotateAround(xrCamera.position, Vector3.up, hmdYaw - originYaw);
+        }
+
+        // 2. Position: Camera-Offset vom Origin abziehen, sodass die KAMERA
+        //    an der Zielposition landet (nicht das Origin selbst).
+        //
+        //    Formel (analog zu deinem TeleportToEntrance):
+        //      cameraOffset = kameraPosition - originPosition  (nur X/Z, Y bleibt)
+        //      neueOriginPosition = zielPosition - cameraOffset
+        //
+        if (recenterTargetPosition != null)
+        {
+            Vector3 cameraOffset = xrCamera.position - transform.position;
+            cameraOffset.y = 0f; // Y nicht anfassen → Floor-Offset bleibt korrekt
+
+            transform.position = recenterTargetPosition.position - cameraOffset;
+        }
+
+        Debug.Log($"[HMDRecenter] Recentered. Origin: {transform.position}, " +
+                  $"Camera: {xrCamera.position}, Yaw: {transform.eulerAngles.y:F1}°");
+    }
 }

@@ -762,9 +762,53 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 612709138493284846, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 756739848756413460, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
       propertyPath: m_Name
       value: XR Origin (XR Rig)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5094452697495241363, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
+      propertyPath: m_RightHandTurnInput.m_InputSourceMode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5094452697495241363, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
+      propertyPath: m_RightHandTurnInput.m_InputActionReference
+      value: 
+      objectReference: {fileID: -6493913391331992944, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+    - target: {fileID: 5094452697495241363, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
+      propertyPath: m_RightHandTurnInput.m_InputAction.m_SingletonActionBindings.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5094452697495241363, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
+      propertyPath: m_RightHandTurnInput.m_InputAction.m_SingletonActionBindings.Array.data[0].m_Id
+      value: c2eb44a2-f0de-44f0-b89d-bc6055a76d71
+      objectReference: {fileID: 0}
+    - target: {fileID: 5094452697495241363, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
+      propertyPath: m_RightHandTurnInput.m_InputAction.m_SingletonActionBindings.Array.data[0].m_Action
+      value: Right Hand Snap Turn
+      objectReference: {fileID: 0}
+    - target: {fileID: 5094452697495241363, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
+      propertyPath: m_RightHandTurnInput.m_InputAction.m_SingletonActionBindings.Array.data[0].m_Interactions
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7679332171127718617, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
+      propertyPath: m_SnapTurn
+      value: 
+      objectReference: {fileID: -6493913391331992944, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+    - target: {fileID: 7679332171127718617, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
+      propertyPath: m_SmoothTurnEnabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7679332171127718617, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
+      propertyPath: m_SmoothMotionEnabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7679332171127718617, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
+      propertyPath: m_NearFarEnableTeleportDuringNearInteraction
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -886,28 +930,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 907aef6d3e9252c4182fbf7ae059c1b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HMDRecenter
-  xrOrigin: {fileID: 1178791450723931738}
-  recenterTarget: {fileID: 0}
-  matchCameraForward: 1
-  matchTargetPosition: 1
-  recenterAction:
-    m_Name: Recenter
-    m_Type: 0
-    m_ExpectedControlType: 
-    m_Id: 35adabd5-a338-448c-9302-942fb26300fc
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings:
-    - m_Name: 
-      m_Id: b6bce718-50d9-42ce-b46d-3ab644c2b0b0
-      m_Path: <XRController>{LeftHand}/{MenuButton}
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Recenter
-      m_Flags: 0
-    m_Flags: 0
-  editorTestKey: 114
+  xrCamera: {fileID: 0}
+  recenterTargetPosition: {fileID: 0}
+  recenterRotation: 1
+  useMenuButton: 1
+  editorKey: 114
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
