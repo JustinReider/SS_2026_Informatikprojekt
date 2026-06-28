@@ -64,7 +64,7 @@ public class SceneDiagnostics : EditorWindow
     [MenuItem("Tools/Scene Diagnostics/3. Finde High-Poly Meshes (über Schwellwert)")]
 		static void FindHighPolyMeshes()
 		{
-		    int threshold = 5000;
+		    int threshold = 40000;
 		    var filters = GameObject.FindObjectsOfType<MeshFilter>();
 		    var smrs = GameObject.FindObjectsOfType<SkinnedMeshRenderer>();
 		
@@ -121,7 +121,6 @@ public class SceneDiagnostics : EditorWindow
 		    }
 		
 		    Debug.LogWarning($"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-		
 		    // Top 3 nochmal zusammenfassen
 		    Debug.LogWarning("🏆 TOP 3 SCHLIMMSTE MESHES:");
 		    foreach (var r in results.Take(3))
