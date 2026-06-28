@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 
-public class GuardPatrol : MonoBehaviour
+public class NPCNavigator : MonoBehaviour
 {
     [Header("Waypoints")]
     public Transform[] waypoints;
@@ -22,6 +22,10 @@ public class GuardPatrol : MonoBehaviour
     [Tooltip("Wie nah muss der Agent am Waypoint sein um anzuhalten (overridet NavMesh stoppingDistance).")]
     public float arrivalDistance = 0.25f;
 
+    [Header("Audio")]
+    [Tooltip("AudioSource auf der Waypoint-Sounds abgespielt werden. Leer lassen = kein Sound.")]
+    public AudioSource waypointAudioSource;
+
     [Header("Follow Mode")]
     [Tooltip("Ab diesem Waypoint-Index wird in den Follow-Modus gewechselt. -1 = kein Follow-Modus.")]
     public int followFromWaypointIndex = -1;
@@ -39,7 +43,6 @@ public class GuardPatrol : MonoBehaviour
     private int currentWaypoint = 0;
     private Coroutine activeCoroutine;
 
-    // Animator Parameter cachen
     private static readonly int AnimWalking = Animator.StringToHash("isWalking");
 
     void Start()
@@ -49,8 +52,6 @@ public class GuardPatrol : MonoBehaviour
 
         agent.speed = walkSpeed;
         agent.stoppingDistance = arrivalDistance;
-
-        // NavMesh soll nicht selbst rotieren
         agent.updateRotation = false;
         agent.angularSpeed = 0f;
 
@@ -61,7 +62,6 @@ public class GuardPatrol : MonoBehaviour
     {
         if (!enableRotation) return;
 
-        // Sanfte Rotation nur beim Laufen (velocity-basiert)
         if (agent.velocity.sqrMagnitude > 0.01f)
         {
             Vector3 flatVelocity = new Vector3(agent.velocity.x, 0f, agent.velocity.z);
@@ -85,7 +85,6 @@ public class GuardPatrol : MonoBehaviour
         if (activeCoroutine != null)
             StopCoroutine(activeCoroutine);
 
-        // Follow-Modus prüfen
         if (followFromWaypointIndex >= 0 && currentWaypoint >= followFromWaypointIndex)
         {
             if (followTarget != null)
@@ -97,13 +96,13 @@ public class GuardPatrol : MonoBehaviour
 
         int targetIndex = currentWaypoint;
         currentWaypoint = (currentWaypoint + 1) % waypoints.Length;
-        activeCoroutine = StartCoroutine(PatrolRoutine(waypoints[targetIndex], targetIndex));
+        activeCoroutine = StartCoroutine(NavigateRoutine(waypoints[targetIndex], targetIndex));
     }
 
     // -----------------------------------------------------------------------
-    // Patrol
+    // Navigation
     // -----------------------------------------------------------------------
-    IEnumerator PatrolRoutine(Transform waypointTransform, int waypointIndex)
+    IEnumerator NavigateRoutine(Transform waypointTransform, int waypointIndex)
     {
         Vector3 target = waypointTransform.position;
 
@@ -112,7 +111,6 @@ public class GuardPatrol : MonoBehaviour
         agent.SetDestination(target);
 
         yield return new WaitUntil(() => !agent.pathPending);
-
         yield return new WaitUntil(() =>
             agent.remainingDistance <= arrivalDistance &&
             agent.velocity.sqrMagnitude < arrivalVelocityThreshold * arrivalVelocityThreshold
@@ -123,13 +121,16 @@ public class GuardPatrol : MonoBehaviour
 
         // --- Phase 2: Rotation zum Waypoint (optional) ---
         if (enableRotation)
-        {
             yield return StartCoroutine(RotateTo(waypointTransform.rotation));
-        }
 
-        // --- Phase 3: Warten ---
-        float wait = waitTimeAtWaypoint;
+        // --- Phase 3: Waypoint-Komponente auslesen ---
         Waypoint wp = waypointTransform.GetComponent<Waypoint>();
+
+        if (wp != null && wp.waypointSound != null && waypointAudioSource != null)
+            waypointAudioSource.PlayOneShot(wp.waypointSound);
+
+        // --- Phase 4: Warten ---
+        float wait = waitTimeAtWaypoint;
         if (wp != null && wp.customWaitTime >= 0f)
             wait = wp.customWaitTime;
 
@@ -176,7 +177,6 @@ public class GuardPatrol : MonoBehaviour
                 agent.ResetPath();
                 SetWalking(false);
 
-                // Nur rotieren wenn Rotation aktiviert ist
                 if (enableRotation)
                 {
                     Vector3 lookDir = (followTarget.position - transform.position).normalized;
