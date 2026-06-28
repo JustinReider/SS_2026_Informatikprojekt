@@ -10796,6 +10796,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1805861208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1066327577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 316f7e8852541734cb0960950a5f2bc6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HMDCameraController
+  xrOrigin: {fileID: 0}
 --- !u!1001 &1828389105
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14172,6 +14185,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 552197131684091276, guid: 93fd7a41c613fb84fb3434fed6e57481, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1805861207}
+    - targetCorrespondingSourceObject: {fileID: 552197131684091276, guid: 93fd7a41c613fb84fb3434fed6e57481, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1805861208}
     - targetCorrespondingSourceObject: {fileID: 1146497423244058755, guid: 93fd7a41c613fb84fb3434fed6e57481, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1020288905}
