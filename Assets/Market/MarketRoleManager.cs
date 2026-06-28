@@ -16,7 +16,7 @@ public class MarketRoleManager : MonoBehaviour
 				else {
 						_xrOriginSwitcher.xrOriginTag = "Sklave";
 						if (sklavePlayer != null && sklavePlayer.CompareTag("Player"))
-								sklavePlayer.SetActive(false);
+								sklavePlayer.tag = "Untagged";
 						NextSceneCollider ncs = exitGate.GetComponent<NextSceneCollider>();
 						ncs.sceneNameToLoad = "RaumSenator";
 				}
