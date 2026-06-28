@@ -758,6 +758,7 @@ MonoBehaviour:
   enableRotation: 1
   arrivalVelocityThreshold: 0.05
   arrivalDistance: 0.25
+  waypointAudioSource: {fileID: 0}
   followFromWaypointIndex: -1
   followTarget: {fileID: 0}
   followDistance: 2
@@ -2341,6 +2342,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: 26
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 1, g: 0.83657384, b: 0, a: 1}
 --- !u!1 &400336228
 GameObject:
   m_ObjectHideFlags: 0
@@ -2387,6 +2390,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!114 &400336231
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2400,6 +2405,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1 &426761185
 GameObject:
   m_ObjectHideFlags: 0
@@ -3362,6 +3369,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1 &577251689
 GameObject:
   m_ObjectHideFlags: 0
@@ -4457,6 +4466,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: 4.5
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 1, g: 0.83657384, b: 0, a: 1}
 --- !u!1 &722273212 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5941132820296106079, guid: 93fd7a41c613fb84fb3434fed6e57481, type: 3}
@@ -4655,6 +4666,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!114 &790737969
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4668,6 +4681,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1001 &793382580
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4793,6 +4808,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!114 &799009844
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4806,6 +4823,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1001 &810404159
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5410,6 +5429,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: 0
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!4 &1014946660
 Transform:
   m_ObjectHideFlags: 0
@@ -6039,6 +6060,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1001 &1139005717
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6231,6 +6254,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: 4.5
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 1, g: 0.83657384, b: 0, a: 1}
 --- !u!1 &1192503341
 GameObject:
   m_ObjectHideFlags: 0
@@ -6485,6 +6510,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: 3
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 1, g: 0.83657384, b: 0, a: 1}
 --- !u!1001 &1268215831
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7498,6 +7525,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1 &1313889567
 GameObject:
   m_ObjectHideFlags: 0
@@ -7696,6 +7725,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!114 &1336412639
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7709,6 +7740,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1 &1344170766
 GameObject:
   m_ObjectHideFlags: 0
@@ -7754,6 +7787,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1 &1344543843
 GameObject:
   m_ObjectHideFlags: 0
@@ -7800,6 +7835,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!114 &1344543846
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7813,6 +7850,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1 &1351235775 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 97ad91be69873124f8691a0204577d05, type: 3}
@@ -8334,6 +8373,7 @@ MonoBehaviour:
   enableRotation: 1
   arrivalVelocityThreshold: 0.05
   arrivalDistance: 0.25
+  waypointAudioSource: {fileID: 1431126240}
   followFromWaypointIndex: -1
   followTarget: {fileID: 0}
   followDistance: 2
@@ -8535,6 +8575,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!114 &1445033183
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8548,6 +8590,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1 &1448352107
 GameObject:
   m_ObjectHideFlags: 0
@@ -8594,6 +8638,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!114 &1448352110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8607,6 +8653,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!114 &1456239879
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8620,6 +8668,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1001 &1472169177
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9752,6 +9802,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: 0
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!4 &1572165839
 Transform:
   m_ObjectHideFlags: 0
@@ -10433,6 +10485,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: 4.5
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 1, g: 0.83657384, b: 0, a: 1}
 --- !u!1001 &1742375749
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10563,6 +10617,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: 4.5
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 1, g: 0.83657384, b: 0, a: 1}
 --- !u!4 &1748440317 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5528370293730062401, guid: 93fd7a41c613fb84fb3434fed6e57481, type: 3}
@@ -10692,6 +10748,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!4 &1805861202 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 928336294649876278, guid: 93fd7a41c613fb84fb3434fed6e57481, type: 3}
@@ -10741,6 +10799,7 @@ MonoBehaviour:
   enableRotation: 1
   arrivalVelocityThreshold: 0.05
   arrivalDistance: 0.25
+  waypointAudioSource: {fileID: 0}
   followFromWaypointIndex: 2
   followTarget: {fileID: 1431126243}
   followDistance: 2
@@ -10808,7 +10867,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 316f7e8852541734cb0960950a5f2bc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HMDCameraController
-  xrOrigin: {fileID: 0}
 --- !u!1001 &1828389105
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11145,6 +11203,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: 4.5
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 1, g: 0.83657384, b: 0, a: 1}
 --- !u!1 &1909860219
 GameObject:
   m_ObjectHideFlags: 0
@@ -11175,6 +11235,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: 27
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!4 &1909860221
 Transform:
   m_ObjectHideFlags: 0
@@ -11236,6 +11298,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!114 &1921401488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11249,6 +11313,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1 &1957118018 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 279155310780917536, guid: d13b837e03fea9343817e2a729d43f5a, type: 3}
@@ -11283,6 +11349,7 @@ MonoBehaviour:
   enableRotation: 1
   arrivalVelocityThreshold: 0.05
   arrivalDistance: 0.25
+  waypointAudioSource: {fileID: 0}
   followFromWaypointIndex: -1
   followTarget: {fileID: 0}
   followDistance: 2
@@ -11645,6 +11712,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: 4.5
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 1, g: 0.83657384, b: 0, a: 1}
 --- !u!1 &2034596718 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -7029948723529949830, guid: 61a61a2f4e8817eb8a758695e3250d2e, type: 3}
@@ -12009,6 +12078,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!114 &2131702173
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12022,6 +12093,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!4 &36267889470356236
 Transform:
   m_ObjectHideFlags: 0
@@ -14303,6 +14376,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!114 &3000243188258823318
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14316,6 +14391,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!114 &3000243188258823319
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14329,6 +14406,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!114 &3000243188258823320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14342,6 +14421,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!114 &3000243188258823321
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14355,6 +14436,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
   customWaitTime: -1
+  waypointSound: {fileID: 0}
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1 &3044295696229819872
 GameObject:
   m_ObjectHideFlags: 0
