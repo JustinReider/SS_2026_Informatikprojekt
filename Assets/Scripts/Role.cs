@@ -10,6 +10,7 @@ public class Role : MonoBehaviour
 {
     public int role;
     public bool listening;
+    private bool istAmLaden = false;
 
     private KeywordRecognizer keywordRecognizer;
     private Dictionary<string, System.Action> keywords = new Dictionary<string, System.Action>();
@@ -22,6 +23,10 @@ public class Role : MonoBehaviour
     [SerializeField] private Context contextSenatorRaum;
     [SerializeField] private Context contextMarkt;
     [SerializeField] private Context contextBakery;
+
+    [Header("UI Komponenten")]
+    [Tooltip("Zieh hier das übergeordnete Objekt 'RolesInfos' rein, das deine Schilder enthält")]
+    public GameObject infoPanelsParent;
 
     void Start()
     {
@@ -40,7 +45,6 @@ public class Role : MonoBehaviour
         // 2. Den Recognizer vorbereiten (aber noch NICHT starten)
         keywordRecognizer = new KeywordRecognizer(keywords.Keys.ToArray());
         keywordRecognizer.OnPhraseRecognized += OnPhraseRecognized;
-        startListen();
     }
 
     // Diese Methode wird von deinem UI-Button aufgerufen
@@ -66,45 +70,73 @@ public class Role : MonoBehaviour
 
     private async void WaehleRolleViaSprache(int roleID)
     {
-        if (role == roleID)
+        infoPanelsParent.SetActive(false);
+        // 1. SCHUTZ VOR DOPPEL-TRIGGER: Bricht sofort ab, wenn die Methode bereits läuft
+        if (istAmLaden)
         {
-            Debug.Log("Rolle bereits current");
+            Debug.LogWarning("[Portal-System] Sprachbefehl ignoriert: Es wird bereits geladen!");
             return;
         }
+
+        if (role == roleID)
+        {
+            return;
+        }
+
+        // Sperre aktivieren und Mikrofon stummschalten während des Ladens
+        istAmLaden = true;
+        stopListen();
+        int currentszene = role == 3 ? 1 : role;
         role = roleID;
 
         if (_transitionManager != null)
         {
-            switch (roleID)
-            {
-                case 0: // lobby
-                    _transitionManager.TargetContext = contextLobby;
-                    Debug.Log("Portal-Ziel via Sprache geändert auf: Lobby");
-                    break;
-                case 1: // sklave
-                    _transitionManager.TargetContext = contextMarkt;
-                    SceneManager.LoadSceneAsync(roleID, LoadSceneMode.Additive);
-                    Debug.Log("Rolle Sklave gewählt (Ziel-Kontext muss noch zugewiesen werden)");
-                    break;
-                case 2: // senator
-                    _transitionManager.TargetContext = contextSenatorRaum;
-                    Debug.Log("Portal-Ziel via Sprache geändert auf: Senator Raum");
-                    break;
-                case 3: // händler
-                    _transitionManager.TargetContext = contextBakery;
-                    Debug.Log("Portal-Ziel via Sprache geändert auf: Markt");
-                    break;
-            }
-            AsyncOperation loadOp = SceneManager.LoadSceneAsync(roleID, LoadSceneMode.Additive);
-            var tcs = new System.Threading.Tasks.TaskCompletionSource<bool>();
-            loadOp.completed += operation => tcs.SetResult(true);
-            await tcs.Task;
-            Scene neuGeladeneSzene = SceneManager.GetSceneByBuildIndex(roleID);
+            // Falls bei Händler (3) die Szene 1 geladen werden soll:
+            int tatsaechlicherSzenenIndex = (roleID == 3) ? 1 : roleID;
 
-            // 2. Erstelle eine Variable, um das Portal zu speichern
+            // ====================================================================
+            // ERWEITERUNG A: Unnötige Szenen entladen (Schützt VR vor Memory-Overflow)
+            // ====================================================================
+            for (int i = SceneManager.sceneCount - 1; i > 0; i--)
+            {
+                Scene offeneSzene = SceneManager.GetSceneAt(i);
+                if (offeneSzene.IsValid())
+                {
+                    // Entlade, wenn es nicht die Lobby (0), nicht die Zielszene und nicht die aktive Spieler-Szene ist
+                    if (offeneSzene.buildIndex != currentszene &&
+                        offeneSzene.buildIndex != tatsaechlicherSzenenIndex)
+                    {
+                        Debug.Log($"[Szenen-Manager] Entlade alte ungenutzte Szene: {offeneSzene.name}");
+                        AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(offeneSzene);
+                        while (unloadOp != null && !unloadOp.isDone)
+                        {
+                            await System.Threading.Tasks.Task.Yield();
+                        }
+                    }
+                }
+            }
+           
+            Scene checkScene = SceneManager.GetSceneByBuildIndex(tatsaechlicherSzenenIndex);
+
+            if (checkScene.IsValid() && checkScene.isLoaded)
+            {
+                Debug.Log($"[Portal-System] Szene {tatsaechlicherSzenenIndex} ist bereits geladen. Überspringe Ladevorgang.");
+            }
+            else
+            {
+                Debug.Log($"[Portal-System] Lade Szene {tatsaechlicherSzenenIndex} additiv...");
+                AsyncOperation loadOp = SceneManager.LoadSceneAsync(tatsaechlicherSzenenIndex, LoadSceneMode.Additive);
+
+                // Sauberer Task-Warter ohne TaskCompletionSource-Müll
+                while (!loadOp.isDone)
+                {
+                    await System.Threading.Tasks.Task.Yield();
+                }
+            }
+
+            Scene neuGeladeneSzene = SceneManager.GetSceneByBuildIndex(tatsaechlicherSzenenIndex);
             Portal gefundenesPortal = null;
 
-            // 3. Durchsuche alle Root-Objekte der NEUEN Szene nach der Portal-Komponente
             if (neuGeladeneSzene.IsValid())
             {
                 GameObject[] rootObjects = neuGeladeneSzene.GetRootGameObjects();
@@ -113,29 +145,29 @@ public class Role : MonoBehaviour
                     gefundenesPortal = go.GetComponentInChildren<Portal>();
                     if (gefundenesPortal != null)
                     {
-                        break; // Gefunden! Schleife abbrechen.
+                        break; 
                     }
                 }
             }
 
-            // 4. Überprüfung und Weitergabe an deinen Initializer
             if (gefundenesPortal != null)
             {
                 Debug.Log($"<color=cyan>[Portal-Finder]</color> Erfolg! Portal-Komponente in der neuen Szene gefunden auf Objekt: {gefundenesPortal.name}");
                 _transitionManager.RegisterTransition(gefundenesPortal);
-
-                // HIER kannst du das gefundene Portal jetzt verwenden oder an deinen Initializer übergeben,
-                // falls dieser die Referenz auf das Zielportal braucht:
-                // _portalInitializer.SetTargetPortal(gefundenesPortal);
             }
             else
             {
-                Debug.LogError($"[Portal-Finder] Kritischer Fehler: In der geladenen Szene '{neuGeladeneSzene.name}' wurde kein Objekt mit der Komponente 'Portal' gefunden!");
+                Debug.LogError($"[Portal-Finder] Kritischer Fehler: In der geladenen Szene wurde kein 'Portal' gefunden!");
+                // Reißleine ziehen bei Fehlern, um Hänger im Initializer zu vermeiden
+                istAmLaden = false;
+                startListen();
+                return;
             }
-            // 3. JETZT informieren wir den PortalInitializer, dass er das Portal öffnen soll!
+
+            // INITIALIZER TRIGGERN
             if (_portalInitializer != null)
             {
-                Debug.Log("CurrentContext ist " + _transitionManager.CurrentContext + ", TargetContext ist " + _transitionManager.TargetContext + ". Informiere PortalInitializer: Öffne Portale für das neue Ziel...");
+                Debug.Log("CurrentContext ist " + _transitionManager.CurrentContext + ", TargetContext ist " + _transitionManager.TargetContext + ". Informiere PortalInitializer...");
                 _portalInitializer.InitializeAndSpawnPortals();
             }
             else
@@ -144,7 +176,8 @@ public class Role : MonoBehaviour
             }
         }
 
-        // Nach erfolgreicher Erkennung stoppen wir das Zuhören direkt wieder!
+        // Lade-Sperre aufheben und Mikrofon wieder aktivieren
+        istAmLaden = false;
     }
 
     private void stopListen()

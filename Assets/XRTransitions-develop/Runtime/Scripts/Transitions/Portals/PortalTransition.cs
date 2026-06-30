@@ -75,7 +75,6 @@ namespace Scripts
 
         internal override async Task OnActionDown(bool isRight)
         {
-            Debug.Log(_portalPrefab);
             if (_isAnimating)
             {
                 return;

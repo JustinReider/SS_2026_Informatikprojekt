@@ -1,0 +1,836 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!200 &20000000
+ShaderVariantCollection:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: NewShaderVariants
+  m_Shaders:
+  - first: {fileID: 66, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: SHADOWS_DEPTH
+        passType: 8
+  - first: {fileID: 106, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: STEREO_INSTANCING_ON _SUNDISK_SIMPLE
+        passType: 0
+      - keywords: _SUNDISK_SIMPLE
+        passType: 0
+  - first: {fileID: 202, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+      - keywords: STEREO_INSTANCING_ON
+        passType: 0
+  - first: {fileID: 10490, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 13
+  - first: {fileID: 9000, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 9001, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 9002, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 9003, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 9004, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 9007, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 9100, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: _UIE_FORCE_GAMMA
+        passType: 0
+  - first: {fileID: 9101, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 18001, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 19011, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: d6dae50ee9e1bfa4db75f19f99355220, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+      - keywords: STEREO_INSTANCING_ON _DEPTH_MSAA_8
+        passType: 0
+      - keywords: _DEPTH_MSAA_8
+        passType: 0
+      - keywords: _OUTPUT_DEPTH
+        passType: 0
+  - first: {fileID: 4800000, guid: 65df88701913c224d95fc554db28381a, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: e7857e9d0c934dc4f83f270f8447b006, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+      - keywords: _BLOOM_HQ _TONEMAP_NEUTRAL
+        passType: 0
+  - first: {fileID: 4800000, guid: 5f1864addb451f54bae8c86d230f736e, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+      - keywords: _BLOOM_HQ
+        passType: 0
+  - first: {fileID: 4800000, guid: 4431b1f1f743fbf4eb310a967890cbea, type: 3}
+    second:
+      variants:
+      - keywords: XR_OCCLUSION_MESH_COMBINED
+        passType: 0
+  - first: {fileID: 4800000, guid: d5a307c014552314b9f560906d708772, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 93446b5c5339d4f00b85c159e1159b7c, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+      - keywords: STEREO_INSTANCING_ON
+        passType: 0
+  - first: {fileID: 4800000, guid: 0e9d5a909a1f7e84882a534d0d11e49f, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: 
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS_CASCADE _SHADOWS_SOFT
+        passType: 13
+  - first: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: INSTANCING_ON
+        passType: 8
+      - keywords: _ALPHATEST_ON
+        passType: 8
+      - keywords: _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+        passType: 8
+      - keywords: EVALUATE_SH_VERTEX INSTANCING_ON REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS_CASCADE _METALLICSPECGLOSSMAP _NORMALMAP _SHADOWS_SOFT
+          _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _ALPHATEST_ON _MAIN_LIGHT_SHADOWS_CASCADE _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _EMISSION _MAIN_LIGHT_SHADOWS
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _EMISSION _MAIN_LIGHT_SHADOWS _METALLICSPECGLOSSMAP
+          _NORMALMAP _OCCLUSIONMAP _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _EMISSION _MAIN_LIGHT_SHADOWS_CASCADE _METALLICSPECGLOSSMAP
+          _NORMALMAP _OCCLUSIONMAP _SHADOWS_SOFT _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _EMISSION _MAIN_LIGHT_SHADOWS_CASCADE _NORMALMAP _OCCLUSIONMAP
+          _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _EMISSION _MAIN_LIGHT_SHADOWS_CASCADE _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _EMISSION _MAIN_LIGHT_SHADOWS_CASCADE _SHADOWS_SOFT
+          _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS_CASCADE
+          _METALLICSPECGLOSSMAP _NORMALMAP _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS_CASCADE
+          _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS_CASCADE
+          _SHADOWS_SOFT _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS _METALLICSPECGLOSSMAP _NORMALMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS _METALLICSPECGLOSSMAP _NORMALMAP
+          _PARALLAXMAP _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS _METALLICSPECGLOSSMAP _NORMALMAP
+          _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS _METALLICSPECGLOSSMAP _NORMALMAP
+          _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS _METALLICSPECGLOSSMAP _PARALLAXMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS _NORMALMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS _NORMALMAP _PARALLAXMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS _PARALLAXMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS _SURFACE_TYPE_TRANSPARENT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE _METALLICSPECGLOSSMAP _NORMALMAP
+          _OCCLUSIONMAP _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE _METALLICSPECGLOSSMAP _NORMALMAP
+          _PARALLAXMAP _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE _METALLICSPECGLOSSMAP _NORMALMAP
+          _PARALLAXMAP _SHADOWS_SOFT _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE _METALLICSPECGLOSSMAP _NORMALMAP
+          _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE _METALLICSPECGLOSSMAP _NORMALMAP
+          _SHADOWS_SOFT _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE _METALLICSPECGLOSSMAP _NORMALMAP
+          _SHADOWS_SOFT _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE _METALLICSPECGLOSSMAP _OCCLUSIONMAP
+          _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE _METALLICSPECGLOSSMAP _PARALLAXMAP
+          _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE _NORMALMAP _OCCLUSIONMAP
+          _PARALLAXMAP _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE _NORMALMAP _PARALLAXMAP
+          _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE _NORMALMAP _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE _NORMALMAP _SHADOWS_SOFT
+          _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE _PARALLAXMAP _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE _SHADOWS_SOFT _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE _SHADOWS_SOFT _SURFACE_TYPE_TRANSPARENT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _ALPHATEST_ON _MAIN_LIGHT_SHADOWS
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _ALPHATEST_ON _MAIN_LIGHT_SHADOWS_CASCADE _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _EMISSION _MAIN_LIGHT_SHADOWS
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _EMISSION _MAIN_LIGHT_SHADOWS _METALLICSPECGLOSSMAP _NORMALMAP _OCCLUSIONMAP
+          _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _EMISSION _MAIN_LIGHT_SHADOWS _NORMALMAP _OCCLUSIONMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _EMISSION _MAIN_LIGHT_SHADOWS _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _EMISSION _MAIN_LIGHT_SHADOWS_CASCADE _METALLICSPECGLOSSMAP _NORMALMAP
+          _OCCLUSIONMAP _SHADOWS_SOFT _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _EMISSION _MAIN_LIGHT_SHADOWS_CASCADE _NORMALMAP _OCCLUSIONMAP _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _EMISSION _MAIN_LIGHT_SHADOWS_CASCADE _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _EMISSION _MAIN_LIGHT_SHADOWS_CASCADE _SHADOWS_SOFT _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS _METALLICSPECGLOSSMAP _NORMALMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS_CASCADE _METALLICSPECGLOSSMAP
+          _NORMALMAP _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS_CASCADE _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS_CASCADE _SHADOWS_SOFT _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS _METALLICSPECGLOSSMAP _NORMALMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS _METALLICSPECGLOSSMAP _NORMALMAP _OCCLUSIONMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS _METALLICSPECGLOSSMAP _NORMALMAP _PARALLAXMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS _METALLICSPECGLOSSMAP _NORMALMAP _PARALLAXMAP _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS _METALLICSPECGLOSSMAP _NORMALMAP _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+          _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS _METALLICSPECGLOSSMAP _NORMALMAP _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS _METALLICSPECGLOSSMAP _OCCLUSIONMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS _METALLICSPECGLOSSMAP _PARALLAXMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS _NORMALMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS _NORMALMAP _OCCLUSIONMAP _PARALLAXMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS _NORMALMAP _PARALLAXMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS _NORMALMAP _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS _PARALLAXMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS _SURFACE_TYPE_TRANSPARENT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS_CASCADE _METALLICSPECGLOSSMAP _NORMALMAP _OCCLUSIONMAP
+          _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS_CASCADE _METALLICSPECGLOSSMAP _NORMALMAP _PARALLAXMAP
+          _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS_CASCADE _METALLICSPECGLOSSMAP _NORMALMAP _PARALLAXMAP
+          _SHADOWS_SOFT _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS_CASCADE _METALLICSPECGLOSSMAP _NORMALMAP _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS_CASCADE _METALLICSPECGLOSSMAP _NORMALMAP _SHADOWS_SOFT
+          _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS_CASCADE _METALLICSPECGLOSSMAP _NORMALMAP _SHADOWS_SOFT
+          _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS_CASCADE _METALLICSPECGLOSSMAP _OCCLUSIONMAP _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS_CASCADE _METALLICSPECGLOSSMAP _PARALLAXMAP _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS_CASCADE _NORMALMAP _OCCLUSIONMAP _PARALLAXMAP _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS_CASCADE _NORMALMAP _PARALLAXMAP _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS_CASCADE _NORMALMAP _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS_CASCADE _NORMALMAP _SHADOWS_SOFT _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+          _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS_CASCADE _PARALLAXMAP _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS_CASCADE _SHADOWS_SOFT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS_CASCADE _SHADOWS_SOFT _SPECULAR_SETUP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS_CASCADE _SHADOWS_SOFT _SURFACE_TYPE_TRANSPARENT
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX STEREO_INSTANCING_ON _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX STEREO_INSTANCING_ON _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS
+          _NORMALMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX STEREO_INSTANCING_ON _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS
+          _NORMALMAP _PARALLAXMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX STEREO_INSTANCING_ON _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS
+          _PARALLAXMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX STEREO_INSTANCING_ON _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX STEREO_INSTANCING_ON _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE
+          _NORMALMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX STEREO_INSTANCING_ON _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE
+          _NORMALMAP _PARALLAXMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX STEREO_INSTANCING_ON _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE
+          _PARALLAXMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS _NORMALMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS _NORMALMAP
+          _PARALLAXMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS _PARALLAXMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE
+          _NORMALMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE
+          _NORMALMAP _PARALLAXMAP
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE
+          _PARALLAXMAP
+        passType: 13
+  - first: {fileID: 4800000, guid: 69c1f799e772cb6438f56c23efccb782, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: 
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION STEREO_INSTANCING_ON
+          _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE _NORMALMAP _SHADOWS_SOFT
+          _TERRAIN_INSTANCED_PERPIXEL_NORMAL
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS _NORMALMAP _TERRAIN_INSTANCED_PERPIXEL_NORMAL
+        passType: 13
+      - keywords: EVALUATE_SH_VERTEX REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS
+          _MAIN_LIGHT_SHADOWS_CASCADE _NORMALMAP _SHADOWS_SOFT _TERRAIN_INSTANCED_PERPIXEL_NORMAL
+        passType: 13
+  - first: {fileID: 4800000, guid: 6d118ceaa1d482544b8ec92406f6bcde, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+  - first: {fileID: 4800000, guid: b8a99704b1204314e816971e63a2a521, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: 
+        passType: 13
+      - keywords: STEREO_INSTANCING_ON
+        passType: 13
+  - first: {fileID: 4800000, guid: 2804f7b141b729843a63342bb87c753d, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+  - first: {fileID: 4800000, guid: 84f38ea7bf09a314d9704e7e023b9035, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+  - first: {fileID: 4800000, guid: da18f2c0d1e13884f8e2c5052a906b52, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 3bbb2f0e70e369e45b6428aaae3ed96c, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+      - keywords: STEREO_INSTANCING_ON
+        passType: 0
+  - first: {fileID: 4800000, guid: 681f0afa76f7b9e4d93e6fd3c2ead6f8, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 13
+      - keywords: STEREO_INSTANCING_ON
+        passType: 13
+  - first: {fileID: 4800000, guid: 2ce4c95e7106985488f7f5bb730b3ae5, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 13
+      - keywords: STEREO_INSTANCING_ON
+        passType: 13
+  - first: {fileID: 4800000, guid: 61be80df73034efd89c73a840725aa82, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: -6465566751694194690, guid: b2ae7513c25b4e447a39a4ccf6a0be8b, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+      - keywords: STEREO_INSTANCING_ON
+        passType: 0
+      - keywords: 
+        passType: 8
+      - keywords: 
+        passType: 13
+  - first: {fileID: 4800000, guid: eac7df44977a8f84eb32bb66ab9aacb2, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 21322c8b137c66e49b86085d3c8161f6, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: REFLECTION_PROBE_ROTATION _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS
+          _TERRAIN_INSTANCED_PERPIXEL_NORMAL
+        passType: 13
+  - first: {fileID: 4800000, guid: 4db90a0fe1133f64d82257532fc07625, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 8fbe92a9edfe6074e841d6dd1509bc59, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 23a71d254a4ba1943948ef4b55fe3886, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 341b058cd7dee4f5cba5cc59a513619e, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: fe393ace9b354375a9cb14cdbbc28be4, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 4e76d4023d7e0411297c670f878973e2, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: bc1ede39bf3643ee8e493720e4259791, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 0178fcb869bafef4690d177d31d17db8, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: f7ada0af4f174f0694ca6a487b8f543d, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL
+        passType: 4
+      - keywords: POINT
+        passType: 5
+      - keywords: SHADOWS_DEPTH
+        passType: 8
+  - first: {fileID: 4800000, guid: 68e6db2ebdc24f95958faec2be5558d6, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 85187c2149c549c5b33f0cdb02836b17, type: 3}
+    second:
+      variants:
+      - keywords: DIRECTIONAL
+        passType: 4
+      - keywords: SHADOWS_DEPTH
+        passType: 8
+  - first: {fileID: 4800000, guid: a02a7d8c237544f1962732b55a9aebf1, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: cf81c85f95fe47e1a27f6ae460cf182c, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: c1e1d3119c6fd4646aea0b4b74cacc1a, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: cdbdb71de5f9c454b980f6d0e87f0afb, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 4bf4cff0d0bac3d43894e2e8839feb40, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 02d2da9bc88d25c4d878c1ed4e0b3854, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: e8ce9961912f3214586fe8709b9012c1, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 5ab0816423f0dfe45841cab3b05ec9ef, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 0ef78d24e85a44f4da9d5b5eaa00e50b, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: f75014305794b3948a3c6d5ccd550e05, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 0d8afcb51cc9f0349a6d190da929b838, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 2c459b89a7c8b1a4fbefe0d81341651c, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 51bcf79c50dc92e47ba87821b61100c3, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 81af42a93ade3dd46a9b583d4eec76d6, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 34a819c9e33402547a81619693adc8d5, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 382151503e2a43a4ebb7366d1632731d, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 7ad194cbe7d006f4bace915156972026, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: b34a29e523cb9d545881e193a079f2df, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: f7ea35cfb33fcad4ab8f2429ec103bef, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 3020ac7ece79a7f4eb789a236f8bd6c5, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: a71093f2a4fe26a40805c22739e10e4a, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: b958ad1c92bd3d64c9e61318b8681dab, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 4117fce9491711c4094d33a048e36e73, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: d7640629310e79646af0f46eb55ae466, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 67f9497810829eb4791ec19e95781e51, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: f997a3dc9254c44459323cced085150c, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 48bb5f55d8670e349b6e614913f9d910, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: fe144c7e314047f4bb779d555c5405ac, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: de7f3ac52268a194383c7d62c2a343c1, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 1e3b057af24249748ff873be7fafee47, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 14eb328de4b8eb245bb7cea29e4ac00b, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 128e987d567d4e2c824d754223b3f3b0, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 5bb6ef6f3e1b20348b4fdb01e4c404e2, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: dd89cf5b9246416f84610a006f916af7, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: c8d12adcee749c344b8117cf7c7eb912, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0

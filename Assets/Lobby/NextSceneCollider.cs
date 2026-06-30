@@ -6,8 +6,11 @@ public class NextSceneCollider : MonoBehaviour
     [Header("Szene wechseln")]
     public string sceneNameToLoad = "DeineSzeneName";
 
-		private void OnTriggerEnter(Collider other) {
-    		// Szene laden
-				LoadingScreenManager.Instance.SimpleLoadScene(sceneNameToLoad);
-		}
+	private void OnTriggerEnter(Collider other) {
+        if (!other.CompareTag("MainCamera"))
+        {
+            return;
+        }
+		LoadingScreenManager.Instance.SimpleLoadScene(sceneNameToLoad);
+	}
 }
