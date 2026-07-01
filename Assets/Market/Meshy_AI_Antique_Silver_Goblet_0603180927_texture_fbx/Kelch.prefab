@@ -22,15 +22,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7cb7256580a3c0f4c8ea082b7b6bf31e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -10.3443
+      value: -1.4906697
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7cb7256580a3c0f4c8ea082b7b6bf31e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.3277
+      value: 0.032799955
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7cb7256580a3c0f4c8ea082b7b6bf31e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -2.9614
+      value: -1.8457246
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7cb7256580a3c0f4c8ea082b7b6bf31e, type: 3}
       propertyPath: m_LocalRotation.w
@@ -42,7 +42,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7cb7256580a3c0f4c8ea082b7b6bf31e, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7cb7256580a3c0f4c8ea082b7b6bf31e, type: 3}
       propertyPath: m_LocalRotation.z
@@ -67,6 +67,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 7cb7256580a3c0f4c8ea082b7b6bf31e, type: 3}
       propertyPath: m_Name
       value: Kelch
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7cb7256580a3c0f4c8ea082b7b6bf31e, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

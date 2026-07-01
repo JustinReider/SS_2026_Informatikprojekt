@@ -406,6 +406,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 97.615, z: 0}
+--- !u!134 &757862446
+PhysicsMaterial:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  serializedVersion: 2
+  m_DynamicFriction: 0.6
+  m_StaticFriction: 0.6
+  m_Bounciness: 0
+  m_FrictionCombine: 0
+  m_BounceCombine: 0
 --- !u!1001 &776715469
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -479,6 +492,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1096611336523956887, guid: a8784c7eaa2102f45b0b9c18bc483286, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 757862446}
     - target: {fileID: 4964431921177556956, guid: a8784c7eaa2102f45b0b9c18bc483286, type: 3}
       propertyPath: m_Name
       value: Parthenon Decorated
@@ -526,8 +543,43 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 241373586320157671, guid: a8784c7eaa2102f45b0b9c18bc483286, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1281227677}
   m_SourcePrefab: {fileID: 100100000, guid: a8784c7eaa2102f45b0b9c18bc483286, type: 3}
+--- !u!1 &1281227676 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 241373586320157671, guid: a8784c7eaa2102f45b0b9c18bc483286, type: 3}
+  m_PrefabInstance: {fileID: 1281227675}
+  m_PrefabAsset: {fileID: 0}
+--- !u!54 &1281227677
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1281227676}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1407292968
 GameObject:
   m_ObjectHideFlags: 0
@@ -770,6 +822,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: XR Origin (XR Rig)
       objectReference: {fileID: 0}
+    - target: {fileID: 1177313279968465375, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
+      propertyPath: m_CastDistance
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1333888683472758812, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
+      propertyPath: m_PhysicsLayerMask.m_Bits
+      value: 257
+      objectReference: {fileID: 0}
     - target: {fileID: 5094452697495241363, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
       propertyPath: m_RightHandTurnInput.m_InputSourceMode
       value: 2
@@ -793,6 +853,14 @@ PrefabInstance:
     - target: {fileID: 5094452697495241363, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
       propertyPath: m_RightHandTurnInput.m_InputAction.m_SingletonActionBindings.Array.data[0].m_Interactions
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7023908458594363974, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
+      propertyPath: m_CastDistance
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7182585027764458373, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
+      propertyPath: m_PhysicsLayerMask.m_Bits
+      value: 257
       objectReference: {fileID: 0}
     - target: {fileID: 7679332171127718617, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
       propertyPath: m_SnapTurn

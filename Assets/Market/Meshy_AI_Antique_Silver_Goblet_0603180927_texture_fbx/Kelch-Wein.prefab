@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5043782039121431591}
   - component: {fileID: 5279611845422965552}
   - component: {fileID: 849843030130175953}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -136,35 +136,35 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7cb7256580a3c0f4c8ea082b7b6bf31e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -1.8032
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7cb7256580a3c0f4c8ea082b7b6bf31e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.0403
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7cb7256580a3c0f4c8ea082b7b6bf31e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.3132
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7cb7256580a3c0f4c8ea082b7b6bf31e, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071068
+      value: 0.68551105
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7cb7256580a3c0f4c8ea082b7b6bf31e, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.7071068
+      value: -0.68551105
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7cb7256580a3c0f4c8ea082b7b6bf31e, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.17342052
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7cb7256580a3c0f4c8ea082b7b6bf31e, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0.17342052
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7cb7256580a3c0f4c8ea082b7b6bf31e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: -90
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7cb7256580a3c0f4c8ea082b7b6bf31e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
@@ -172,7 +172,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7cb7256580a3c0f4c8ea082b7b6bf31e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: 28.394
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 7cb7256580a3c0f4c8ea082b7b6bf31e, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -181,6 +181,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 7cb7256580a3c0f4c8ea082b7b6bf31e, type: 3}
       propertyPath: m_Name
       value: Kelch-Wein
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7cb7256580a3c0f4c8ea082b7b6bf31e, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
