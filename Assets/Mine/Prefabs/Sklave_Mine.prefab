@@ -248,7 +248,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 7941078092304190902, guid: 334230b628ec3514cbdb1f2acc02750d, type: 3}
+  - {fileID: 2100000, guid: 3f767dfc57d79224580f55a62ffc2ad4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -275,7 +275,7 @@ SkinnedMeshRenderer:
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
   m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: 3768844831929098126, guid: 334230b628ec3514cbdb1f2acc02750d, type: 3}
+  m_Mesh: {fileID: 942229499021420666, guid: 334230b628ec3514cbdb1f2acc02750d, type: 3}
   m_Bones:
   - {fileID: 2762860309884563272}
   - {fileID: 574072462693285623}
@@ -1892,7 +1892,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae947d483a142084d8a7c4b13ca0a7c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterAnimationEvents
-  pickaxeAudioSource: {fileID: 5074521347462948484}
+  AudioSource: {fileID: 5074521347462948484}
 --- !u!82 &32685261055352219
 AudioSource:
   m_ObjectHideFlags: 0

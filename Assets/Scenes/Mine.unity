@@ -5445,6 +5445,10 @@ PrefabInstance:
       propertyPath: m_Material
       value: 
       objectReference: {fileID: 57280722}
+    - target: {fileID: 7133331965170441073, guid: 9b9c7ab1016404b4b813d08688a4bd45, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 3f767dfc57d79224580f55a62ffc2ad4, type: 2}
     - target: {fileID: 7197642527850952251, guid: 9b9c7ab1016404b4b813d08688a4bd45, type: 3}
       propertyPath: MaxDistance
       value: 2.17
@@ -5461,6 +5465,10 @@ PrefabInstance:
       propertyPath: MinDistance
       value: 0.37
       objectReference: {fileID: 0}
+    - target: {fileID: 7454124502945606343, guid: 9b9c7ab1016404b4b813d08688a4bd45, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 3f767dfc57d79224580f55a62ffc2ad4, type: 2}
     - target: {fileID: 8948443521717409022, guid: 9b9c7ab1016404b4b813d08688a4bd45, type: 3}
       propertyPath: m_Name
       value: tunnelsystem
