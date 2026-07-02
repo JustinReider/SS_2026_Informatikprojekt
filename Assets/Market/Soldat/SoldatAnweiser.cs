@@ -79,8 +79,11 @@ public class SoldatAnweiser : MonoBehaviour
     {
         if (untertitelText == null) return;
 
-        if (hauptKamera == null)
-            hauptKamera = Camera.main;
+        // Bewusst jeden Frame neu geholt statt gecacht: eine einmal gecachte,
+        // aber falsche/inaktive Kamera (z.B. beim späteren Aktivieren der
+        // echten VR-Kamera) würde sonst nie wieder aktualisiert, da die
+        // Referenz dann nicht mehr null ist.
+        hauptKamera = Camera.main;
         if (hauptKamera == null) return;
 
         untertitelText.transform.position = transform.position + untertitelVersatz;

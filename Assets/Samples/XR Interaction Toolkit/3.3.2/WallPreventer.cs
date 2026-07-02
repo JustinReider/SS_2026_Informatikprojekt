@@ -1,5 +1,6 @@
 using Unity.XR.CoreUtils;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit.Locomotion.Movement;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(XROrigin))]
@@ -9,6 +10,13 @@ public class WallPreventer : MonoBehaviour
     [SerializeField] private float minHeight = 0.6f;        // Wichtig! Nicht zu klein machen
     [SerializeField] private float heightOffset = 0.15f;    // Etwas kleiner als vorher
     [SerializeField] private float smoothing = 8f;          // Sanfter Übergang
+
+    [Header("Geschwindigkeit basierend auf Grösse")]
+    [SerializeField] private ContinuousMoveProvider moveProvider; // Wird automatisch gesucht, falls leer
+    [SerializeField] private float minSpeed = 0.75f;         // Geschwindigkeit, wenn der Spieler ganz geduckt ist
+    [SerializeField] private float minSpeedHeight = 0.6f;    // Grösse, bei der minSpeed erreicht wird
+    [SerializeField] private float maxSpeed = 2.5f;          // Geschwindigkeit bei normaler/voller Grösse
+    [SerializeField] private float maxSpeedHeight = 1.8f;    // Grösse, bei der maxSpeed erreicht wird
 
     private CharacterController characterController;
     private XROrigin xrOrigin;
@@ -27,6 +35,15 @@ public class WallPreventer : MonoBehaviour
         }
 
         headTransform = xrOrigin.Camera.transform;
+
+        if (moveProvider == null)
+            moveProvider = GetComponentInChildren<ContinuousMoveProvider>(true);
+
+        if (moveProvider == null)
+            Debug.LogWarning("WallPreventer: Kein ContinuousMoveProvider (oder DynamicMoveProvider) gefunden. Geschwindigkeits-Anpassung wird übersprungen.");
+
+        if (minSpeedHeight >= maxSpeedHeight)
+            Debug.LogWarning("WallPreventer: minSpeedHeight sollte kleiner als maxSpeedHeight sein.");
 
         // Initiale Werte setzen
         currentHeight = characterController.height;
@@ -53,6 +70,13 @@ public class WallPreventer : MonoBehaviour
         characterController.height = currentHeight;
         center.y = currentHeight / 2f;
         characterController.center = center;
+
+        // Geschwindigkeit an aktuelle (geglättete) Grösse anpassen
+        if (moveProvider != null)
+        {
+            float heightT = Mathf.InverseLerp(minSpeedHeight, maxSpeedHeight, currentHeight);
+            moveProvider.moveSpeed = Mathf.SmoothStep(minSpeed, maxSpeed, heightT);
+        }
 
         // Nur SimpleMove aufrufen wenn wirklich nötig (Performance + Stabilität)
         if (characterController.enabled)

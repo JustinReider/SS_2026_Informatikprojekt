@@ -854,6 +854,30 @@ PrefabInstance:
       propertyPath: m_RightHandTurnInput.m_InputAction.m_SingletonActionBindings.Array.data[0].m_Interactions
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 6655257976464031731, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
+      propertyPath: minSpeed
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6655257976464031731, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
+      propertyPath: minHeight
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 6655257976464031731, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
+      propertyPath: heightOffset
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6655257976464031731, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
+      propertyPath: moveProvider
+      value: 
+      objectReference: {fileID: 775544722552386191}
+    - target: {fileID: 6655257976464031731, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
+      propertyPath: maxSpeedHeight
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6655257976464031731, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
+      propertyPath: minSpeedHeight
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 7023908458594363974, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
       propertyPath: m_CastDistance
       value: 5
@@ -886,6 +910,22 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 6520291404552358010}
   m_SourcePrefab: {fileID: 100100000, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
+--- !u!114 &775544722552386191 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7843651128451002126, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
+  m_PrefabInstance: {fileID: 775544722552386190}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b1e8c997df241c1a67045eeac79b41b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &775544722552386192 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9155890859985403093, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
+  m_PrefabInstance: {fileID: 775544722552386190}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1178791450723931738 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2980279707955382081, guid: 579bd51914f57d349a41a89175cbdb0c, type: 3}
@@ -998,7 +1038,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 907aef6d3e9252c4182fbf7ae059c1b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HMDRecenter
-  xrCamera: {fileID: 0}
+  xrCamera: {fileID: 775544722552386192}
   recenterTargetPosition: {fileID: 0}
   recenterRotation: 1
   useMenuButton: 1

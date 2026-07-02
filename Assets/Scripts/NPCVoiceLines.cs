@@ -20,10 +20,20 @@ public class NPCVoiceLines : MonoBehaviour
 
     private AudioSource audioSource;
 
-    void Start()
+    void Awake()
     {
         audioSource = GetComponent<AudioSource>();
+    }
+
+    void OnEnable()
+    {
         StartCoroutine(VoiceLineRoutine());
+    }
+
+    void OnDisable()
+    {
+        StopAllCoroutines();
+        audioSource.Stop();
     }
 
     IEnumerator VoiceLineRoutine()
