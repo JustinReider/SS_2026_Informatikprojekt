@@ -62,72 +62,102 @@ public class SceneDiagnostics : EditorWindow
     }
 
     [MenuItem("Tools/Scene Diagnostics/3. Finde High-Poly Meshes (über Schwellwert)")]
-		static void FindHighPolyMeshes()
-		{
-		    int threshold = 40000;
-		    var filters = GameObject.FindObjectsOfType<MeshFilter>();
-		    var smrs = GameObject.FindObjectsOfType<SkinnedMeshRenderer>();
-		
-		    // Alle Meshes sammeln (MeshFilter + SkinnedMeshRenderer)
-		    var results = new List<(string name, string path, int tris, int verts, string type, GameObject go)>();
-		
-		    foreach (var f in filters)
-		    {
-		        if (f.sharedMesh == null) continue;
-		        int tris = f.sharedMesh.triangles.Length / 3;
-		        if (tris >= threshold)
-		            results.Add((f.gameObject.name, GetPath(f.gameObject), tris, f.sharedMesh.vertexCount, "Static", f.gameObject));
-		    }
-		
-		    foreach (var s in smrs)
-		    {
-		        if (s.sharedMesh == null) continue;
-		        int tris = s.sharedMesh.triangles.Length / 3;
-		        if (tris >= threshold)
-		            results.Add((s.gameObject.name, GetPath(s.gameObject), tris, s.sharedMesh.vertexCount, "Skinned", s.gameObject));
-		    }
-		
-		    if (results.Count == 0)
-		    {
-		        Debug.Log($"✅ Keine Meshes über {threshold} Dreiecke gefunden.");
-		        return;
-		    }
-		
-		    // Sortieren: schlimmste zuerst
-		    results = results.OrderByDescending(r => r.tris).ToList();
-		
-		    // Gesamtstatistik
-		    int totalTris = results.Sum(r => r.tris);
-		    Debug.LogWarning($"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-		    Debug.LogWarning($"⚠️ HIGH-POLY MESH RANGLISTE (>{threshold} Tris)");
-		    Debug.LogWarning($"   Gefunden: {results.Count} Meshes | Gesamt-Tris: {totalTris:N0}");
-		    Debug.LogWarning($"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-		
-		    // Rangliste ausgeben
-		    for (int i = 0; i < results.Count; i++)
-		    {
-		        var r = results[i];
-		        float percentage = (float)r.tris / totalTris * 100f;
-		
-		        // Emoji je nach Schwere
-		        string severity = r.tris > 50000 ? "🔴" : r.tris > 20000 ? "🟠" : r.tris > 10000 ? "🟡" : "🟢";
-		
-		        Debug.LogWarning(
-		            $"{severity} #{i + 1:D2} | {r.tris:N0} Tris ({percentage:F1}%) | " +
-		            $"{r.verts:N0} Verts | [{r.type}] | " +
-		            $"{r.name} | {r.path}",
-		            r.go
-		        );
-		    }
-		
-		    Debug.LogWarning($"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-		    // Top 3 nochmal zusammenfassen
-		    Debug.LogWarning("🏆 TOP 3 SCHLIMMSTE MESHES:");
-		    foreach (var r in results.Take(3))
-		        Debug.LogWarning($"   → {r.name}: {r.tris:N0} Tris — in Blender reduzieren!", r.go);
-		
-		    Selection.objects = results.Select(r => r.go).Cast<Object>().ToArray();
-		}
+    static void FindHighPolyMeshes()
+    {
+        int threshold = 40000;
+        var filters = GameObject.FindObjectsOfType<MeshFilter>();
+        var smrs = GameObject.FindObjectsOfType<SkinnedMeshRenderer>();
+
+        // Alle Instanzen sammeln (MeshFilter + SkinnedMeshRenderer)
+        var instances = new List<(Mesh mesh, string name, string path, int tris, int verts, string type, GameObject go)>();
+
+        foreach (var f in filters)
+        {
+            if (f.sharedMesh == null) continue;
+            int tris = f.sharedMesh.triangles.Length / 3;
+            if (tris >= threshold)
+                instances.Add((f.sharedMesh, f.gameObject.name, GetPath(f.gameObject), tris, f.sharedMesh.vertexCount, "Static", f.gameObject));
+        }
+
+        foreach (var s in smrs)
+        {
+            if (s.sharedMesh == null) continue;
+            int tris = s.sharedMesh.triangles.Length / 3;
+            if (tris >= threshold)
+                instances.Add((s.sharedMesh, s.gameObject.name, GetPath(s.gameObject), tris, s.sharedMesh.vertexCount, "Skinned", s.gameObject));
+        }
+
+        if (instances.Count == 0)
+        {
+            Debug.Log($"✅ Keine Meshes über {threshold} Dreiecke gefunden.");
+            return;
+        }
+
+        // Nach Mesh-Asset gruppieren: Ein Stein mit 50.000 Tris, der 10x in der Szene
+        // steht, frisst 500.000 Tris Gesamtlast — mehr als eine einzelne 300.000-Tris-Statue.
+        // Rangliste daher nach GESAMT-Tris-Last sortieren, nicht nach Tris pro Instanz.
+        var groups = instances
+            .GroupBy(r => r.mesh)
+            .Select(g => new
+            {
+                mesh = g.Key,
+                trisPerInstance = g.First().tris,
+                vertsPerInstance = g.First().verts,
+                type = g.First().type,
+                instanceCount = g.Count(),
+                totalTris = g.First().tris * g.Count(),
+                instances = g.ToList()
+            })
+            .OrderByDescending(g => g.totalTris)
+            .ToList();
+
+        int grandTotalTris = groups.Sum(g => g.totalTris);
+
+        Debug.LogWarning($"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        Debug.LogWarning($"⚠️ HIGH-POLY MESH RANGLISTE (>{threshold} Tris pro Instanz)");
+        Debug.LogWarning($"   {groups.Count} Mesh-Assets | {instances.Count} Instanzen | Gesamt-Tris (Szenenlast): {grandTotalTris:N0}");
+        Debug.LogWarning($"   Sortiert nach Gesamt-Tris-Last (Tris/Instanz × Vorkommen) — das kostet performancetechnisch am meisten");
+        Debug.LogWarning($"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
+        // Rangliste ausgeben
+        for (int i = 0; i < groups.Count; i++)
+        {
+            var g = groups[i];
+            float percentage = (float)g.totalTris / grandTotalTris * 100f;
+
+            // Emoji je nach Gesamtlast, nicht nach Einzel-Tris
+            string severity = g.totalTris > 200000 ? "🔴" : g.totalTris > 100000 ? "🟠" : g.totalTris > 50000 ? "🟡" : "🟢";
+            string multiplier = g.instanceCount > 1 ? $" (×{g.instanceCount} Instanzen!)" : "";
+
+            Debug.LogWarning(
+                $"{severity} #{i + 1:D2} | {g.totalTris:N0} Gesamt-Tris ({percentage:F1}%) | " +
+                $"{g.trisPerInstance:N0} Tris/Instanz × {g.instanceCount}{multiplier} | " +
+                $"{g.vertsPerInstance:N0} Verts | [{g.type}] | " +
+                $"{g.mesh.name}",
+                g.instances[0].go
+            );
+
+            // Bei mehreren Instanzen alle Fundorte mit auflisten
+            if (g.instanceCount > 1)
+            {
+                foreach (var inst in g.instances)
+                    Debug.LogWarning($"      → {inst.name} | {inst.path}", inst.go);
+            }
+        }
+
+        Debug.LogWarning($"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        // Top 3 nochmal zusammenfassen
+        Debug.LogWarning("🏆 TOP 3 SCHLIMMSTE MESHES (nach Gesamt-Szenenlast):");
+        foreach (var g in groups.Take(3))
+        {
+            string hint = g.instanceCount > 1
+                ? $"{g.mesh.name}: {g.trisPerInstance:N0} Tris × {g.instanceCount} Instanzen = {g.totalTris:N0} Gesamt-Tris — EIN MAL in Blender reduzieren wirkt sich auf alle Instanzen aus!"
+                : $"{g.mesh.name}: {g.totalTris:N0} Tris — in Blender reduzieren!";
+            Debug.LogWarning($"   → {hint}", g.instances[0].go);
+        }
+
+        Selection.objects = instances.Select(r => r.go).Cast<Object>().ToArray();
+    }
 
     [MenuItem("Tools/Scene Diagnostics/4. Finde Realtime Lights")]
     static void FindRealtimeLights()
