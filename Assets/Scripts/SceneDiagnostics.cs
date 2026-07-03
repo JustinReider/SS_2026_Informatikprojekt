@@ -8,6 +8,38 @@ using System.Linq;
 
 public class SceneDiagnostics : EditorWindow
 {
+    const string ThresholdPrefKey = "SceneDiagnostics.HighPolyThreshold";
+    const int DefaultThreshold = 40000;
+
+    static int Threshold
+    {
+        get => EditorPrefs.GetInt(ThresholdPrefKey, DefaultThreshold);
+        set => EditorPrefs.SetInt(ThresholdPrefKey, value);
+    }
+
+    [MenuItem("Tools/Scene Diagnostics/0. Schwellwert ändern")]
+    static void OpenThresholdWindow()
+    {
+        var window = GetWindow<SceneDiagnostics>(true, "High-Poly Schwellwert", true);
+        window.minSize = new Vector2(320, 90);
+        window.maxSize = new Vector2(320, 90);
+        window.Show();
+    }
+
+    void OnGUI()
+    {
+        EditorGUILayout.LabelField("Schwellwert für High-Poly Meshes (Tris/Instanz)", EditorStyles.wordWrappedLabel);
+        EditorGUILayout.Space(4);
+        EditorGUI.BeginChangeCheck();
+        int newThreshold = EditorGUILayout.IntField("Schwellwert", Threshold);
+        if (EditorGUI.EndChangeCheck())
+            Threshold = Mathf.Max(0, newThreshold);
+
+        EditorGUILayout.Space(4);
+        if (GUILayout.Button("Zurücksetzen auf Standard (40.000)"))
+            Threshold = DefaultThreshold;
+    }
+
     [MenuItem("Tools/Scene Diagnostics/1. Finde NavMeshObstacles mit Carving")]
     static void FindCarvingObstacles()
     {
@@ -64,32 +96,36 @@ public class SceneDiagnostics : EditorWindow
     [MenuItem("Tools/Scene Diagnostics/3. Finde High-Poly Meshes (über Schwellwert)")]
     static void FindHighPolyMeshes()
     {
-        int threshold = 40000;
+        int threshold = Threshold;
         var filters = GameObject.FindObjectsOfType<MeshFilter>();
         var smrs = GameObject.FindObjectsOfType<SkinnedMeshRenderer>();
 
-        // Alle Instanzen sammeln (MeshFilter + SkinnedMeshRenderer)
-        var instances = new List<(Mesh mesh, string name, string path, int tris, int verts, string type, GameObject go)>();
+        // Alle Instanzen der GESAMTEN Szene sammeln (MeshFilter + SkinnedMeshRenderer),
+        // damit die echte Szenenlast berechnet werden kann — nicht nur die der High-Poly-Ausreißer.
+        var allInstances = new List<(Mesh mesh, string name, string path, int tris, int verts, string type, GameObject go)>();
 
         foreach (var f in filters)
         {
             if (f.sharedMesh == null) continue;
             int tris = f.sharedMesh.triangles.Length / 3;
-            if (tris >= threshold)
-                instances.Add((f.sharedMesh, f.gameObject.name, GetPath(f.gameObject), tris, f.sharedMesh.vertexCount, "Static", f.gameObject));
+            allInstances.Add((f.sharedMesh, f.gameObject.name, GetPath(f.gameObject), tris, f.sharedMesh.vertexCount, "Static", f.gameObject));
         }
 
         foreach (var s in smrs)
         {
             if (s.sharedMesh == null) continue;
             int tris = s.sharedMesh.triangles.Length / 3;
-            if (tris >= threshold)
-                instances.Add((s.sharedMesh, s.gameObject.name, GetPath(s.gameObject), tris, s.sharedMesh.vertexCount, "Skinned", s.gameObject));
+            allInstances.Add((s.sharedMesh, s.gameObject.name, GetPath(s.gameObject), tris, s.sharedMesh.vertexCount, "Skinned", s.gameObject));
         }
+
+        // Echte Gesamt-Tris-Last der kompletten Szene (alle Instanzen, unabhängig vom Schwellwert)
+        int sceneTotalTris = allInstances.Sum(r => r.tris);
+
+        var instances = allInstances.Where(r => r.tris >= threshold).ToList();
 
         if (instances.Count == 0)
         {
-            Debug.Log($"✅ Keine Meshes über {threshold} Dreiecke gefunden.");
+            Debug.Log($"✅ Keine Meshes über {threshold} Dreiecke gefunden. Echte Szenenlast gesamt: {sceneTotalTris:N0} Tris.");
             return;
         }
 
@@ -112,10 +148,12 @@ public class SceneDiagnostics : EditorWindow
             .ToList();
 
         int grandTotalTris = groups.Sum(g => g.totalTris);
+        float shareOfScene = sceneTotalTris > 0 ? (float)grandTotalTris / sceneTotalTris * 100f : 0f;
 
         Debug.LogWarning($"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         Debug.LogWarning($"⚠️ HIGH-POLY MESH RANGLISTE (>{threshold} Tris pro Instanz)");
-        Debug.LogWarning($"   {groups.Count} Mesh-Assets | {instances.Count} Instanzen | Gesamt-Tris (Szenenlast): {grandTotalTris:N0}");
+        Debug.LogWarning($"   {groups.Count} Mesh-Assets | {instances.Count} Instanzen | High-Poly-Anteil: {grandTotalTris:N0} Tris ({shareOfScene:F1}% der Szene)");
+        Debug.LogWarning($"   ECHTE GESAMT-TRIS-LAST DER SZENE (alle Meshes): {sceneTotalTris:N0}");
         Debug.LogWarning($"   Sortiert nach Gesamt-Tris-Last (Tris/Instanz × Vorkommen) — das kostet performancetechnisch am meisten");
         Debug.LogWarning($"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
@@ -123,7 +161,7 @@ public class SceneDiagnostics : EditorWindow
         for (int i = 0; i < groups.Count; i++)
         {
             var g = groups[i];
-            float percentage = (float)g.totalTris / grandTotalTris * 100f;
+            float percentage = sceneTotalTris > 0 ? (float)g.totalTris / sceneTotalTris * 100f : 0f;
 
             // Emoji je nach Gesamtlast, nicht nach Einzel-Tris
             string severity = g.totalTris > 200000 ? "🔴" : g.totalTris > 100000 ? "🟠" : g.totalTris > 50000 ? "🟡" : "🟢";
