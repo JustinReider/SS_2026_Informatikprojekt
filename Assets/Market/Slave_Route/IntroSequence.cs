@@ -1,10 +1,18 @@
 using UnityEngine;
+using UnityEngine.AI;
 using System.Collections;
 
 public class IntroSequence : MonoBehaviour
 {
     public Transform senator;
-    
+    public Transform senatorStoppPosition;
+
+    [Header("Sklaven")]
+    public GameObject sklave1;
+    public GameObject sklave2;
+
+    private const float AnkunftToleranz = 0.5f;
+
     // Audio Clips
     public AudioClip clipSenatorAnkunft; // "Ecce! Servi pulchri hic sunt!"
     public AudioClip clipSenatorDialog1; // "Vendo mihi servum fortem, vir!"
@@ -20,21 +28,23 @@ public class IntroSequence : MonoBehaviour
 
     void Start()
     {
+        DeaktiviereSklavenBewegung(sklave1);
+        DeaktiviereSklavenBewegung(sklave2);
+
         StartCoroutine(IntroAblauf());
     }
 
     IEnumerator IntroAblauf()
     {
-        // 1. Warten auf Tribüne
+        // 1. Warten bis der Senator an seiner Startposition (SenatorStoppPosition) angekommen ist
         Debug.Log("Warte auf Senator...");
-        yield return new WaitForSeconds(3f);
+        if (senator != null && senatorStoppPosition != null)
+        {
+            yield return new WaitUntil(() =>
+                Vector3.Distance(senator.position, senatorStoppPosition.position) <= AnkunftToleranz);
+        }
 
-        // 2. Senator läuft zur Position
-        Debug.Log("Senator kommt!");
-
-        yield return new WaitForSeconds(2f);
-
-        // 3. Senator kommt an (schaut dich an)
+        // 2. Senator kommt an (schaut dich an)
         senatorAudioSource.PlayOneShot(clipSenatorAnkunft); // ~3 Sek
         yield return new WaitForSeconds(3.5f);
 
@@ -64,5 +74,37 @@ public class IntroSequence : MonoBehaviour
 
         // 10. (Optional) Verkäufer verabschiedet
         verkaeuferAudioSource.PlayOneShot(clipVerkaueferVerabschiedet); // ~2 Sek
+        yield return new WaitForSeconds(2f);
+
+        // 11. Handel ist abgeschlossen: Sklaven dürfen sich jetzt bewegen
+        AktiviereSklavenBewegung(sklave1);
+        AktiviereSklavenBewegung(sklave2);
+    }
+
+    private void DeaktiviereSklavenBewegung(GameObject sklave)
+    {
+        if (sklave == null) return;
+
+        NPCNavigator navigator = sklave.GetComponent<NPCNavigator>();
+        if (navigator != null)
+            navigator.enabled = false;
+
+        NavMeshAgent agent = sklave.GetComponent<NavMeshAgent>();
+        if (agent != null)
+            agent.enabled = false;
+    }
+
+    private void AktiviereSklavenBewegung(GameObject sklave)
+    {
+        if (sklave == null) return;
+
+        // Reihenfolge wichtig: NavMeshAgent muss aktiv sein, bevor NPCNavigator.Start() darauf zugreift.
+        NavMeshAgent agent = sklave.GetComponent<NavMeshAgent>();
+        if (agent != null)
+            agent.enabled = true;
+
+        NPCNavigator navigator = sklave.GetComponent<NPCNavigator>();
+        if (navigator != null)
+            navigator.enabled = true;
     }
 }
