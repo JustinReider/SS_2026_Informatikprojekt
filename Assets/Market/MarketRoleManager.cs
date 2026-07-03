@@ -5,6 +5,7 @@ public class MarketRoleManager : MonoBehaviour
 		[SerializeField] private PlayerRoleData roleData;
 		[SerializeField] private GameObject sklavePlayer;
 		[SerializeField] private GameObject exitGate;
+		[SerializeField] private GameObject baeckerNPC;
 		
     private XROriginSwitcher _xrOriginSwitcher = new XROriginSwitcher();
 
@@ -20,6 +21,10 @@ public class MarketRoleManager : MonoBehaviour
 						NextSceneCollider ncs = exitGate.GetComponent<NextSceneCollider>();
 						ncs.sceneNameToLoad = "RaumSenator";
 				}
+
+				if (baeckerNPC != null)
+						baeckerNPC.SetActive(roleData.CurrentRole != PlayerRole.Haendler);
+
         _xrOriginSwitcher.FindAndDisableXROrigin();
     }
 

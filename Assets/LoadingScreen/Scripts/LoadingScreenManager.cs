@@ -47,7 +47,12 @@ public class LoadingScreenManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
+            return;
         }
+
+        // Spiel startet komplett schwarz, bevor die erste Szene eingeblendet wird
+        if (globalVolume != null)
+            globalVolume.weight = 1f;
     }
 
     void Start()
@@ -96,7 +101,8 @@ public class LoadingScreenManager : MonoBehaviour
     // =========================
     IEnumerator LoadFirstScene()
     {
-        yield return StartCoroutine(ui.FadeIn(fadeTime));
+        StartCoroutine(ui.FadeIn(fadeTime));
+        yield return StartCoroutine(FadeFromBlack(fadeTime));
         if (music != null) StartCoroutine(music.FadeIn(fadeTime));
 
         var load = SceneManager.LoadSceneAsync(firstScene, LoadSceneMode.Additive);
@@ -119,13 +125,14 @@ public class LoadingScreenManager : MonoBehaviour
         var loadedScene = SceneManager.GetSceneAt(SceneManager.sceneCount - 1);
 
         if (music != null) StartCoroutine(music.FadeOut(fadeTime));
-        yield return StartCoroutine(ui.FadeOut(fadeTime));
-        yield return new WaitForSeconds(fadeTime);
+        StartCoroutine(ui.FadeOut(fadeTime));
+        yield return StartCoroutine(FadeToBlack(fadeTime));
 
         SceneManager.SetActiveScene(loadedScene);
         yield return StartCoroutine(TeleportToEntrance(loadedScene, firstEntranceId));
 
         DisableLoadingScreen();
+        yield return StartCoroutine(FadeFromBlack(fadeTime));
     }
 
     // =========================
@@ -134,33 +141,39 @@ public class LoadingScreenManager : MonoBehaviour
     IEnumerator LoadSceneCoroutine(string targetScene, string entranceId)
     {
         isLoading = true;
-        EnableLoadingScreen(false);
-
         PauseLocomotionScripts();
-        yield return UnloadCurrentScene();
 
+        // Übergang 1a: aktuelle Szene ausblenden (schwarz)
+        yield return StartCoroutine(FadeToBlack(fadeTime));
+
+        yield return UnloadCurrentScene();
         TeleportPlayerToLoadingScreen();
 
-        yield return StartCoroutine(PerformLoadSequence(targetScene, entranceId, true));
+        // Übergang 1b: Ladebildschirm einblenden
+        EnableLoadingScreen(false);
+        StartCoroutine(ui.FadeIn(fadeTime));
+        yield return StartCoroutine(FadeFromBlack(fadeTime));
+
+        yield return StartCoroutine(PerformLoadSequence(targetScene, entranceId, true, true));
         isLoading = false;
     }
 
     IEnumerator SimpleLoadSceneCoroutine(string targetScene, string entranceId)
     {
         isLoading = true;
-        EnablePostProcessing();
-        EnableLoadingScreen(true);
-
         PauseLocomotionScripts();
-        yield return UnloadCurrentScene();
 
+        // Bleibt die ganze Zeit schwarz, Ladebildschirm-Visuals werden nie eingeblendet
+        yield return StartCoroutine(FadeToBlack(fadeTime));
+
+        yield return UnloadCurrentScene();
         TeleportPlayerToLoadingScreen();
 
-        yield return StartCoroutine(PerformLoadSequence(targetScene, entranceId, true, 2f));
+        yield return StartCoroutine(PerformLoadSequence(targetScene, entranceId, true, false, 2f));
         isLoading = false;
     }
 
-    private IEnumerator PerformLoadSequence(string targetScene, string entranceId, bool useMusicFadeIn, float fadeInMultiplier = 1f)
+    private IEnumerator PerformLoadSequence(string targetScene, string entranceId, bool useMusicFadeIn, bool showVisuals, float fadeInMultiplier = 1f)
     {
         if (useMusicFadeIn && music != null)
             StartCoroutine(music.FadeIn(fadeTime * fadeInMultiplier));
@@ -183,13 +196,22 @@ public class LoadingScreenManager : MonoBehaviour
         var loadedScene = SceneManager.GetSceneAt(SceneManager.sceneCount - 1);
 
         if (music != null) StartCoroutine(music.FadeOut(fadeTime));
-        yield return StartCoroutine(ui.FadeOut(fadeTime));
-        yield return new WaitForSeconds(fadeTime);
+
+        // Übergang 2a: Ladebildschirm ausblenden, um den Szenenwechsel zu verdecken
+        // (im "simple" Modus ist der Bildschirm bereits schwarz, daher kein erneuter Fade nötig)
+        if (showVisuals)
+        {
+            StartCoroutine(ui.FadeOut(fadeTime));
+            yield return StartCoroutine(FadeToBlack(fadeTime));
+        }
 
         SceneManager.SetActiveScene(loadedScene);
         yield return StartCoroutine(TeleportToEntrance(loadedScene, entranceId));
 
         DisableLoadingScreen();
+
+        // Übergang 2b: neue Szene einblenden
+        yield return StartCoroutine(FadeFromBlack(fadeTime));
     }
 
     private IEnumerator UnloadCurrentScene()
@@ -318,10 +340,32 @@ public class LoadingScreenManager : MonoBehaviour
             script.OnLoadingScreenActivated();
     }
 
-    void EnablePostProcessing()
+    // =========================
+    // GLOBAL VOLUME FADE (schwarzblende zwischen Szenen)
+    // =========================
+    private IEnumerator FadePostProcess(float target, float duration)
     {
-        if (globalVolume != null)
-            globalVolume.enabled = true;
+        if (globalVolume == null) yield break;
+
+        float start = globalVolume.weight;
+        float t = 0f;
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            globalVolume.weight = Mathf.Lerp(start, target, t / duration);
+            yield return null;
+        }
+        globalVolume.weight = target;
+    }
+
+    private IEnumerator FadeToBlack(float duration)
+    {
+        yield return FadePostProcess(1f, duration);
+    }
+
+    private IEnumerator FadeFromBlack(float duration)
+    {
+        yield return FadePostProcess(0f, duration);
     }
 
     void DisableLoadingScreen()

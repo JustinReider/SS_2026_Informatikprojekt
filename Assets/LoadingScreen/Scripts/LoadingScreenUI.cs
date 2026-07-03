@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Rendering;
 using System.Collections;
 
 public class LoadingScreenUI : MonoBehaviour, ILoadingScreenScript
@@ -20,9 +19,6 @@ public class LoadingScreenUI : MonoBehaviour, ILoadingScreenScript
     [Header("Fade & Progress")]
     public CanvasGroup canvasGroup;
     public Image progressBar;
-
-    [Header("POST PROCESS FADE")]
-    public Volume postProcessVolume;
 
     private int currentImageIndex = 0;
     private Coroutine slideshow;
@@ -50,7 +46,7 @@ public class LoadingScreenUI : MonoBehaviour, ILoadingScreenScript
     }
 
     // =========================
-    // 🔥 POST PROCESS FADE IN
+    // UI FADE IN (Canvas Alpha)
     // =========================
     public IEnumerator FadeIn(float duration)
     {
@@ -60,11 +56,6 @@ public class LoadingScreenUI : MonoBehaviour, ILoadingScreenScript
         {
             float v = t / duration;
 
-            // Szene wird dunkler (echter Fade)
-            if (postProcessVolume != null)
-                postProcessVolume.weight = 1-v;
-
-            // UI optional parallel
             if (canvasGroup != null)
                 canvasGroup.alpha = v;
 
@@ -72,15 +63,12 @@ public class LoadingScreenUI : MonoBehaviour, ILoadingScreenScript
             yield return null;
         }
 
-        if (postProcessVolume != null)
-            postProcessVolume.weight = 0f;
-
         if (canvasGroup != null)
             canvasGroup.alpha = 1f;
     }
 
     // =========================
-    // 🔥 POST PROCESS FADE OUT
+    // UI FADE OUT (Canvas Alpha)
     // =========================
     public IEnumerator FadeOut(float duration)
     {
@@ -90,18 +78,12 @@ public class LoadingScreenUI : MonoBehaviour, ILoadingScreenScript
         {
             float v = 1f - (t / duration);
 
-            if (postProcessVolume != null)
-                postProcessVolume.weight = 1-v;
-
             if (canvasGroup != null)
                 canvasGroup.alpha = v;
 
             t += Time.deltaTime;
             yield return null;
         }
-
-        if (postProcessVolume != null)
-            postProcessVolume.weight = 1f;
 
         if (canvasGroup != null)
             canvasGroup.alpha = 0f;

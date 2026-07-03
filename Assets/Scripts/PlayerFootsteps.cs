@@ -18,8 +18,16 @@ public class PlayerFootsteps : MonoBehaviour
 
     void Start()
     {
+        // Beim FPS-PlayerCapsule sitzt der CharacterController auf demselben Objekt.
+        // Beim XR Origin (XR Rig) sitzt er auf dem Root-Objekt, waehrend dieses Script
+        // z.B. an der Main Camera haengt (fuer kopfnahes Audio) - daher zusaetzlich
+        // in Eltern/Kindern suchen.
         controller = GetComponent<CharacterController>();
-        
+        if (controller == null)
+            controller = GetComponentInParent<CharacterController>();
+        if (controller == null)
+            controller = GetComponentInChildren<CharacterController>();
+
         if (audioSource == null)
             audioSource = GetComponent<AudioSource>();
 
@@ -38,7 +46,7 @@ public class PlayerFootsteps : MonoBehaviour
 
 				Vector3 horizontalVelocity = new Vector3(controller.velocity.x, 0f, controller.velocity.z);
     		float horizontalSpeed = horizontalVelocity.magnitude;
-        // Geschwindigkeit auf dem Boden prüfen
+        // Geschwindigkeit auf dem Boden pruefen
 				bool isGrounded = GetDistanceToGround() < jumpHeight;
 				bool isMoving = isGrounded && controller.velocity.magnitude > 0.1f;
     		bool isSprinting = horizontalSpeed > sprintSpeed; // an deine Sprint-Speed anpassen
@@ -72,11 +80,13 @@ public class PlayerFootsteps : MonoBehaviour
 		float GetDistanceToGround()
 		{
 		    float radius = controller.radius;
-		    Vector3 origin = transform.position + Vector3.up * radius;
-		
+		    // Von der Position des CharacterControllers aus messen, nicht von transform.position
+		    // dieses Scripts - relevant, wenn das Script an einem Kind (z.B. Main Camera) haengt.
+		    Vector3 origin = controller.transform.position + Vector3.up * radius;
+
 		    if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, Mathf.Infinity))
 		        return hit.distance - radius;
-		
+
 		    return Mathf.Infinity;
 		}
 }
