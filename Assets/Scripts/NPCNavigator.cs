@@ -12,6 +12,17 @@ public class NPCNavigator : MonoBehaviour
     public float walkSpeed = 1.5f;
     [Tooltip("Wie schnell der NPC auf Gehgeschwindigkeit beschleunigt bzw. beim Ankommen abbremst (NavMeshAgent.acceleration). Niedriger = spürbar weicheres Anlaufen und Ausrollen statt sofort voller Geschwindigkeit.")]
     public float walkAcceleration = 2f;
+    [Tooltip("Koppelt das Abspieltempo der Geh-Animation an die tatsächliche Laufgeschwindigkeit, damit die Füße beim Beschleunigen/Abbremsen nicht über den Boden rutschen. Bei walkSpeed läuft die Animation mit 1x. Aus = immer normales Tempo.")]
+    public bool tempoAnGeschwindigkeitKoppeln = true;
+    [Tooltip("Bei welcher Drehgeschwindigkeit (Grad/Sek) die Schritt-Animation beim Drehen auf der Stelle mit normalem Tempo (1x) läuft. Sorgt dafür, dass die Beine beim Drehen zur Drehgeschwindigkeit passen statt einzufrieren.")]
+    public float drehAnimReferenzSpeed = 160f;
+    [Tooltip("Untergrenze fürs Animationstempo während Gehen/Drehen. Verhindert, dass die Beine kurz vorm Anhalten fast einfrieren – der letzte Schritt läuft stattdessen zügig aus. Höher = flotter, aber minimal mehr Fuß-Rutschen bei ganz langsamer Fahrt.")]
+    [Range(0.1f, 1f)]
+    public float minLaufAnimTempo = 0.6f;
+    [Tooltip("Wie schnell sich das Animationstempo an seinen Zielwert anpasst (pro Sekunde). Glättet vor allem den Rücksprung auf 1x beim Übergang in die Idle-Pose, sodass es kein harter Ruck ist.")]
+    public float animTempoGlaettung = 6f;
+    [Tooltip("Unter dieser tatsächlichen Laufgeschwindigkeit (m/s) schaltet die Animation auf Idle, auch wenn der NPC navigatorisch noch 'läuft'. Verhindert einen sichtbaren Schritt im Stand, wenn er praktisch schon angekommen ist.")]
+    public float animStehSchwelle = 0.12f;
 
     [Header("Rotation")]
 		[Tooltip("Wenn false, wird jegliche Rotation komplett deaktiviert. Der NPC behält dann seine Start-Rotation.")]
@@ -31,6 +42,12 @@ public class NPCNavigator : MonoBehaviour
     public float arrivalVelocityThreshold = 0.05f;
     [Tooltip("Wie nah muss der Agent am Waypoint sein um anzuhalten (overridet NavMesh stoppingDistance).")]
     public float arrivalDistance = 0.25f;
+
+    [Header("Natürliche Ankunft (Anlauf)")]
+    [Tooltip("Der NPC steuert den Wegpunkt über einen Punkt in dieser Entfernung DAHINTER an (entlang der Rückrichtung des Wegpunkts) und läuft dann in Blickrichtung hinein. Dadurch kommt er bereits richtig ausgerichtet an und muss nicht im Stand pivoten. 0 = direkt ansteuern wie bisher. Nur wirksam, wenn Platz/NavMesh hinter dem Wegpunkt ist – sonst automatischer Rückfall auf direktes Ansteuern.")]
+    public float anlaufDistanz = 1.2f;
+    [Tooltip("Ab dieser Restdistanz zum Anlauf-Punkt schaltet der NPC – ohne anzuhalten – auf den eigentlichen Wegpunkt um. So entsteht eine fließende Kurve statt eines Zwischenstopps.")]
+    public float anlaufUmschaltDistanz = 0.4f;
 
     [Header("Audio")]
     [Tooltip("AudioSource auf der Waypoint-Sounds abgespielt werden. Leer lassen = kein Sound.")]
@@ -57,6 +74,7 @@ public class NPCNavigator : MonoBehaviour
 		private float rotationsGroesse = 0f; // größter bisher in der laufenden Drehung gesehener Restwinkel (für kleinwinkelDaempfung)
 		private Transform blickZiel; // im Stand zu fixierendes Ziel (z.B. followTarget), wird in Update() jeden Frame sanft angesehen
 		private bool coroutineDrehtAktiv = false; // solange true, übernimmt eine Coroutine (z.B. Wegpunkt-Ausrichtung) die Drehung; Update() hält sich raus
+		private bool willLaufen = false; // Navigations-Absicht zu laufen; der tatsächliche Animator-Zustand wird pro Frame anhand der echten Bewegung entschieden
 
     private static readonly int AnimWalking = Animator.StringToHash("isWalking");
 
@@ -77,6 +95,8 @@ public class NPCNavigator : MonoBehaviour
     
 		void Update()
 		{
+		    UpdateLaufAnimationsTempo();
+
 		    if (!enableRotation) return;
 		    if (coroutineDrehtAktiv) return; // eine Coroutine steuert gerade die Drehung, sonst würde Update() ihr die Geschwindigkeit wegnehmen
 
@@ -112,6 +132,8 @@ public class NPCNavigator : MonoBehaviour
         if (activeCoroutine != null)
             StopCoroutine(activeCoroutine);
         coroutineDrehtAktiv = false; // falls die alte Coroutine mitten in einer Drehung war
+        if (agent != null)
+            agent.autoBraking = true; // falls die alte Coroutine mitten im Anlauf (autoBraking aus) unterbrochen wurde
 
         if (followFromWaypointIndex >= 0 && currentWaypoint >= followFromWaypointIndex)
         {
@@ -134,11 +156,37 @@ public class NPCNavigator : MonoBehaviour
     {
         blickZiel = null; // falls zuvor im Follow-Modus gesetzt
 
-        Vector3 target = waypointTransform.position;
+        Vector3 zielPos = waypointTransform.position;
 
-        // --- Phase 1: Laufen ---
+        // Anlauf-Punkt ein Stück HINTER dem Wegpunkt (entlang dessen Rückrichtung). Läuft der NPC
+        // erst dorthin und dann in den Wegpunkt hinein, kommt er bereits in Blickrichtung an und
+        // muss am Ende nicht mehr im Stand herumpivoten. Nur wenn dort auch NavMesh ist.
+        bool anlaufMoeglich = false;
+        Vector3 anlaufPunkt = zielPos;
+        if (enableRotation && anlaufDistanz > 0.01f)
+        {
+            Vector3 kandidat = zielPos - waypointTransform.forward * anlaufDistanz;
+            if (NavMesh.SamplePosition(kandidat, out NavMeshHit hit, 0.5f, NavMesh.AllAreas))
+            {
+                anlaufPunkt = hit.position;
+                anlaufMoeglich = true;
+            }
+        }
+
         SetWalking(true);
-        agent.SetDestination(target);
+
+        // --- Phase 1a: zum Anlauf-Punkt, dort NICHT anhalten, sondern fließend umschalten ---
+        if (anlaufMoeglich)
+        {
+            agent.autoBraking = false; // am Anlauf-Punkt nicht abbremsen, sondern durchziehen (Kurve)
+            agent.SetDestination(anlaufPunkt);
+            yield return new WaitUntil(() => !agent.pathPending);
+            yield return new WaitUntil(() => agent.remainingDistance <= anlaufUmschaltDistanz);
+        }
+
+        // --- Phase 1b: in den eigentlichen Wegpunkt hineinlaufen (jetzt wieder mit Abbremsen) ---
+        agent.autoBraking = true;
+        agent.SetDestination(zielPos);
 
         yield return new WaitUntil(() => !agent.pathPending);
         yield return new WaitUntil(() =>
@@ -148,9 +196,10 @@ public class NPCNavigator : MonoBehaviour
 
         agent.ResetPath();
 
-        // --- Phase 2: Rotation zum Waypoint (optional) ---
-        // Die Geh-/Schritt-Animation läuft bewusst WÄHREND der Drehung weiter: die sich bewegenden
-        // Beine lassen es wie "Umdrehen mit Schritten" aussehen statt wie ein Pivot im Idle-Stand.
+        // --- Phase 2: exakte Ausrichtung zum Waypoint ---
+        // Dank Anlauf-Ankunft ist das meist nur noch eine kleine Restkorrektur statt einer großen
+        // Drehung. Die Geh-/Schritt-Animation läuft dabei bewusst weiter (Beine bewegen sich), damit
+        // eine evtl. doch nötige größere Drehung nicht wie ein Pivot im Idle-Stand aussieht.
         if (enableRotation)
         {
             coroutineDrehtAktiv = true;
@@ -231,9 +280,20 @@ public class NPCNavigator : MonoBehaviour
     IEnumerator RotateTo(Quaternion target, float threshold = 2f)
     {
         float targetYaw = target.eulerAngles.y;
+        float gesamtWinkel = Mathf.Abs(Mathf.DeltaAngle(transform.eulerAngles.y, targetYaw));
+        bool zuIdleGewechselt = false;
 
         while (Mathf.Abs(Mathf.DeltaAngle(transform.eulerAngles.y, targetYaw)) > threshold)
         {
+            // Ab etwa der Hälfte der Drehung von Geh-Schritten in die Idle-Pose wechseln – die letzte
+            // (kleine) Restdrehung sieht im Stand natürlicher aus als weiter marschierende Beine.
+            float rest = Mathf.Abs(Mathf.DeltaAngle(transform.eulerAngles.y, targetYaw));
+            if (!zuIdleGewechselt && rest <= gesamtWinkel * 0.5f)
+            {
+                SetWalking(false);
+                zuIdleGewechselt = true;
+            }
+
             DreheSanftZuYaw(targetYaw);
             yield return null;
         }
@@ -317,7 +377,43 @@ public class NPCNavigator : MonoBehaviour
 
     void SetWalking(bool walking)
     {
-        animator.SetBool(AnimWalking, walking);
+        // Nur die Absicht setzen. Ob die Geh-Animation tatsächlich läuft, entscheidet
+        // UpdateLaufAnimationsTempo pro Frame anhand der echten Bewegung.
+        willLaufen = walking;
+    }
+
+    // Entscheidet pro Frame Geh-/Idle-Zustand UND koppelt das Abspieltempo an die tatsächliche
+    // Bewegung, damit die Beine nicht rutschen und kein Schritt im Stand passiert.
+    void UpdateLaufAnimationsTempo()
+    {
+        float horizontalSpeed = new Vector2(agent.velocity.x, agent.velocity.z).magnitude;
+
+        // Geh-Animation nur zeigen, wenn der NPC tatsächlich läuft ODER sich absichtlich auf der
+        // Stelle dreht. Steht er praktisch schon (Geschwindigkeit unter der Schwelle), sofort Idle –
+        // kein sichtbarer Schritt mehr direkt am Wegpunkt.
+        bool laufAnimAktiv = willLaufen && (horizontalSpeed > animStehSchwelle || coroutineDrehtAktiv);
+        animator.SetBool(AnimWalking, laufAnimAktiv);
+
+        float zielTempo = 1f;
+        if (tempoAnGeschwindigkeitKoppeln && laufAnimAktiv)
+        {
+            if (coroutineDrehtAktiv)
+            {
+                // Drehung auf der Stelle (kaum Translation): Schritt-Tempo an die Drehgeschwindigkeit
+                // koppeln, sonst würden die Beine bei ~0 Laufgeschwindigkeit einfrieren.
+                float drehTempo = drehAnimReferenzSpeed > 0.01f ? currentYawSpeed / drehAnimReferenzSpeed : 1f;
+                zielTempo = Mathf.Clamp(drehTempo, minLaufAnimTempo, 1.5f);
+            }
+            else
+            {
+                // Normales Gehen: Tempo an die horizontale Laufgeschwindigkeit koppeln (1x bei walkSpeed).
+                float faktor = walkSpeed > 0.01f ? horizontalSpeed / walkSpeed : 1f;
+                zielTempo = Mathf.Clamp(faktor, minLaufAnimTempo, 1.5f);
+            }
+        }
+
+        // Weich nachführen statt hart setzen – so ist der Rücksprung auf 1x beim Idle-Übergang kein Ruck.
+        animator.speed = Mathf.MoveTowards(animator.speed, zielTempo, animTempoGlaettung * Time.deltaTime);
     }
 
     void StopMoving()
