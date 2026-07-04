@@ -2005,9 +2005,12 @@ MonoBehaviour:
   - {fileID: 1445033181}
   waitTimeAtWaypoint: 10
   walkSpeed: 1
+  walkAcceleration: 2
   enableRotation: 1
-  rotationSpeed: 150
-  rotationAcceleration: 5
+  rotationSpeed: 100
+  rotationAcceleration: 30
+  kleinwinkelDaempfung: 2.5
+  kleinwinkelReferenzWinkel: 20
   arrivalVelocityThreshold: 0.05
   arrivalDistance: 0.25
   waypointAudioSource: {fileID: 0}
@@ -6335,6 +6338,14 @@ PrefabInstance:
     - target: {fileID: 6569352422260391484, guid: 517d3a986058b404ca6876518413f557, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7103407337460728968, guid: 517d3a986058b404ca6876518413f557, type: 3}
+      propertyPath: rotationSpeed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7103407337460728968, guid: 517d3a986058b404ca6876518413f557, type: 3}
+      propertyPath: rotationAcceleration
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7103407337460728968, guid: 517d3a986058b404ca6876518413f557, type: 3}
       propertyPath: waypoints.Array.size
@@ -11920,6 +11931,14 @@ PrefabInstance:
       value: FrauUnterwegs
       objectReference: {fileID: 0}
     - target: {fileID: 2329100784641117722, guid: 7c23c454564273e4d9fcf60f92e1917d, type: 3}
+      propertyPath: rotationSpeed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2329100784641117722, guid: 7c23c454564273e4d9fcf60f92e1917d, type: 3}
+      propertyPath: rotationAcceleration
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 2329100784641117722, guid: 7c23c454564273e4d9fcf60f92e1917d, type: 3}
       propertyPath: waypoints.Array.size
       value: 5
       objectReference: {fileID: 0}
@@ -15233,6 +15252,14 @@ PrefabInstance:
     - target: {fileID: 6569352422260391484, guid: 517d3a986058b404ca6876518413f557, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7103407337460728968, guid: 517d3a986058b404ca6876518413f557, type: 3}
+      propertyPath: rotationSpeed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7103407337460728968, guid: 517d3a986058b404ca6876518413f557, type: 3}
+      propertyPath: rotationAcceleration
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7222867737024397885, guid: 517d3a986058b404ca6876518413f557, type: 3}
       propertyPath: m_LocalPosition.x
@@ -24186,6 +24213,14 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7103407337460728968, guid: 517d3a986058b404ca6876518413f557, type: 3}
+      propertyPath: rotationSpeed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7103407337460728968, guid: 517d3a986058b404ca6876518413f557, type: 3}
+      propertyPath: rotationAcceleration
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 7222867737024397885, guid: 517d3a986058b404ca6876518413f557, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.0000000013038518
@@ -26740,9 +26775,12 @@ MonoBehaviour:
   - {fileID: 1745739005}
   waitTimeAtWaypoint: 10
   walkSpeed: 1
+  walkAcceleration: 2
   enableRotation: 1
   rotationSpeed: 100
-  rotationAcceleration: 5
+  rotationAcceleration: 30
+  kleinwinkelDaempfung: 2.5
+  kleinwinkelReferenzWinkel: 20
   arrivalVelocityThreshold: 0.05
   arrivalDistance: 0.25
   waypointAudioSource: {fileID: 1431126240}
@@ -30996,9 +31034,12 @@ MonoBehaviour:
   - {fileID: 1014946660}
   waitTimeAtWaypoint: 10
   walkSpeed: 1
+  walkAcceleration: 2
   enableRotation: 1
-  rotationSpeed: 150
-  rotationAcceleration: 5
+  rotationSpeed: 100
+  rotationAcceleration: 30
+  kleinwinkelDaempfung: 2.5
+  kleinwinkelReferenzWinkel: 20
   arrivalVelocityThreshold: 0.05
   arrivalDistance: 0.25
   waypointAudioSource: {fileID: 0}
@@ -32099,6 +32140,14 @@ PrefabInstance:
     - target: {fileID: 6569352422260391484, guid: 517d3a986058b404ca6876518413f557, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7103407337460728968, guid: 517d3a986058b404ca6876518413f557, type: 3}
+      propertyPath: rotationSpeed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7103407337460728968, guid: 517d3a986058b404ca6876518413f557, type: 3}
+      propertyPath: rotationAcceleration
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7103407337460728968, guid: 517d3a986058b404ca6876518413f557, type: 3}
       propertyPath: waypoints.Array.size
@@ -37564,6 +37613,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7103407337460728968, guid: 517d3a986058b404ca6876518413f557, type: 3}
+      propertyPath: rotationSpeed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7103407337460728968, guid: 517d3a986058b404ca6876518413f557, type: 3}
+      propertyPath: rotationAcceleration
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 7103407337460728968, guid: 517d3a986058b404ca6876518413f557, type: 3}
       propertyPath: waypoints.Array.size
       value: 4
       objectReference: {fileID: 0}
@@ -38538,9 +38595,12 @@ MonoBehaviour:
   - {fileID: 799009842}
   waitTimeAtWaypoint: 10
   walkSpeed: 1
+  walkAcceleration: 2
   enableRotation: 1
-  rotationSpeed: 150
-  rotationAcceleration: 5
+  rotationSpeed: 100
+  rotationAcceleration: 30
+  kleinwinkelDaempfung: 2.5
+  kleinwinkelReferenzWinkel: 20
   arrivalVelocityThreshold: 0.05
   arrivalDistance: 0.25
   waypointAudioSource: {fileID: 0}
@@ -58710,6 +58770,14 @@ PrefabInstance:
     - target: {fileID: 1915101342110134846, guid: 7c23c454564273e4d9fcf60f92e1917d, type: 3}
       propertyPath: m_Name
       value: FrauUnterwegs
+      objectReference: {fileID: 0}
+    - target: {fileID: 2329100784641117722, guid: 7c23c454564273e4d9fcf60f92e1917d, type: 3}
+      propertyPath: rotationSpeed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2329100784641117722, guid: 7c23c454564273e4d9fcf60f92e1917d, type: 3}
+      propertyPath: rotationAcceleration
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 2329100784641117722, guid: 7c23c454564273e4d9fcf60f92e1917d, type: 3}
       propertyPath: waypoints.Array.size
@@ -216503,9 +216571,12 @@ MonoBehaviour:
   - {fileID: 1014946660}
   waitTimeAtWaypoint: 10
   walkSpeed: 1
+  walkAcceleration: 2
   enableRotation: 1
-  rotationSpeed: 150
-  rotationAcceleration: 5
+  rotationSpeed: 100
+  rotationAcceleration: 30
+  kleinwinkelDaempfung: 2.5
+  kleinwinkelReferenzWinkel: 20
   arrivalVelocityThreshold: 0.05
   arrivalDistance: 0.25
   waypointAudioSource: {fileID: 0}
