@@ -11133,7 +11133,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IntroSequence
   senator: {fileID: 1431126243}
-  senatorStoppPosition: {fileID: 1250634994}
+  senatorStoppPosition: {fileID: 374863983}
   sklave1: {fileID: 3317689566595827973}
   sklave2: {fileID: 1039653046}
   clipSenatorAnkunft: {fileID: 8300000, guid: f3e6ad6f0a32f120aa712c4f2bb14cb5, type: 3}
@@ -20270,13 +20270,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1250634993}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.68169606, z: -0, w: 0.7316355}
-  m_LocalPosition: {x: -3.51, y: 0.16600001, z: 66.115}
+  m_LocalRotation: {x: -0, y: -0.7191373, z: -0, w: 0.694868}
+  m_LocalPosition: {x: -2.016, y: 0.16600001, z: 66.359}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2049582593}
-  m_LocalEulerAnglesHint: {x: 0, y: -85.953, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -91.967, z: 0}
 --- !u!114 &1250634995
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20289,7 +20289,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbd76427641e3224f851a2ca5b3b7e0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Waypoint
-  customWaitTime: 3
+  customWaitTime: 6.43
   waypointSound: {fileID: 0}
   gizmoColor: {r: 1, g: 0.83657384, b: 0, a: 1}
 --- !u!1 &1253055634
