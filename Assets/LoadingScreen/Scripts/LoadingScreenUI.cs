@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using TMPro;
 
 public class LoadingScreenUI : MonoBehaviour, ILoadingScreenScript
 {
@@ -19,6 +20,10 @@ public class LoadingScreenUI : MonoBehaviour, ILoadingScreenScript
     [Header("Fade & Progress")]
     public CanvasGroup canvasGroup;
     public Image progressBar;
+
+    [Header("Nachricht (eigener Canvas, z.B. für Simple-Ladebildschirm)")]
+    public CanvasGroup messageCanvasGroup;
+    public TMP_Text messageText;
 
     private int currentImageIndex = 0;
     private Coroutine slideshow;
@@ -87,6 +92,42 @@ public class LoadingScreenUI : MonoBehaviour, ILoadingScreenScript
 
         if (canvasGroup != null)
             canvasGroup.alpha = 0f;
+    }
+
+    // =========================
+    // NACHRICHT (Text-Overlay)
+    // =========================
+    public IEnumerator ShowMessage(string message, float duration)
+    {
+        if (messageCanvasGroup == null) yield break;
+
+        if (messageText != null) messageText.text = message;
+
+        messageCanvasGroup.gameObject.SetActive(true);
+        yield return FadeCanvasGroup(messageCanvasGroup, 0f, 1f, duration);
+    }
+
+    public IEnumerator HideMessage(float duration)
+    {
+        if (messageCanvasGroup == null) yield break;
+
+        yield return FadeCanvasGroup(messageCanvasGroup, messageCanvasGroup.alpha, 0f, duration);
+        messageCanvasGroup.gameObject.SetActive(false);
+    }
+
+    private IEnumerator FadeCanvasGroup(CanvasGroup cg, float from, float to, float duration)
+    {
+        float t = 0f;
+        cg.alpha = from;
+
+        while (t < duration)
+        {
+            cg.alpha = Mathf.Lerp(from, to, t / duration);
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        cg.alpha = to;
     }
 
     private IEnumerator SlideshowRoutine()

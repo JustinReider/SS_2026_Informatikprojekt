@@ -31,11 +31,18 @@ public class LoadingScreenManager : MonoBehaviour
     [Header("Global Volume")]
     public Volume globalVolume;
 
+    [Header("Message Overlay")]
+    [Tooltip("Layer, den die Overlay-Kamera für den Ladebildschirm-Text rendert. " +
+             "Muss in den Project Settings als Layer existieren und darf sonst für nichts verwendet werden.")]
+    public string messageOverlayLayer = "LoadingUI";
+
     private XRInteractionManager interactionManager;
     private CharacterController characterController;
     private bool isLoading = false;
     private LoadingScreenUI ui;
     private RandomBackgroundMusic music;
+    private Camera messageOverlayCamera;
+    private bool messageOverlayReady;
 
     void Awake()
     {
@@ -66,9 +73,61 @@ public class LoadingScreenManager : MonoBehaviour
         characterController = playerObject.GetComponent<CharacterController>();
 
         CreateInteractionManagerIfMissing();
+        SetupMessageOverlay();
 
         playerObject.SetActive(true);
         StartCoroutine(LoadFirstScene());
+    }
+
+    // =========================
+    // MESSAGE OVERLAY CAMERA
+    // Rendert den Text NACH dem Post-Processing, damit er über der Schwarzblende sichtbar bleibt.
+    // =========================
+    private void SetupMessageOverlay()
+    {
+        if (ui == null || ui.messageCanvasGroup == null) return;
+        if (mainCamera == null) mainCamera = Camera.main;
+        if (mainCamera == null) return;
+
+        int layer = LayerMask.NameToLayer(messageOverlayLayer);
+        if (layer < 0)
+        {
+            Debug.LogWarning($"[LoadingScreen] Layer '{messageOverlayLayer}' existiert nicht. " +
+                             "Bitte in den Project Settings anlegen, sonst bleibt der Ladebildschirm-Text unsichtbar.");
+            return;
+        }
+
+        // Text-Canvas (inkl. Kinder) auf den dedizierten Layer legen
+        SetLayerRecursively(ui.messageCanvasGroup.gameObject, layer);
+
+        // Hauptkamera soll den Text-Layer NICHT selbst rendern – sonst würde ihn das Post-Processing schlucken
+        mainCamera.cullingMask &= ~(1 << layer);
+
+        var baseData = mainCamera.GetUniversalAdditionalCameraData();
+
+        var camObj = new GameObject("MessageOverlayCamera");
+        camObj.transform.SetParent(mainCamera.transform, false);
+
+        messageOverlayCamera = camObj.AddComponent<Camera>();
+        messageOverlayCamera.clearFlags = CameraClearFlags.Depth;
+        messageOverlayCamera.cullingMask = 1 << layer;
+        messageOverlayCamera.depth = mainCamera.depth + 1;
+
+        var overlayData = messageOverlayCamera.GetUniversalAdditionalCameraData();
+        overlayData.renderType = CameraRenderType.Overlay;
+        overlayData.renderPostProcessing = false;
+
+        if (!baseData.cameraStack.Contains(messageOverlayCamera))
+            baseData.cameraStack.Add(messageOverlayCamera);
+
+        messageOverlayReady = true;
+    }
+
+    private static void SetLayerRecursively(GameObject go, int layer)
+    {
+        go.layer = layer;
+        foreach (Transform child in go.transform)
+            SetLayerRecursively(child.gameObject, layer);
     }
 
     private void CreateInteractionManagerIfMissing()
@@ -91,9 +150,18 @@ public class LoadingScreenManager : MonoBehaviour
         if (!isLoading) StartCoroutine(LoadSceneCoroutine(targetScene, entranceId));
     }
 
-    public void SimpleLoadScene(string targetScene, string entranceId = "default")
+    /// <summary>
+    /// Startet den einfachen (durchgehend schwarzen) Ladebildschirm.
+    /// </summary>
+    /// <param name="targetScene">Zu ladende Szene.</param>
+    /// <param name="entranceId">Ziel-Eingang in der neuen Szene.</param>
+    /// <param name="message">Optionaler Text, der während des Ladens in VR angezeigt wird
+    /// (z.B. "Dein Charakter wurde in die Mine geschickt"). Leer = kein Text.</param>
+    /// <param name="minSimpleLoadTime">Mindestdauer des Ladebildschirms für diesen Durchlauf in Sekunden.
+    /// Werte &lt; 0 verwenden den Standardwert <see cref="minLoadTime"/>.</param>
+    public void SimpleLoadScene(string targetScene, string entranceId = "default", string message = "", float minSimpleLoadTime = -1f)
     {
-        if (!isLoading) StartCoroutine(SimpleLoadSceneCoroutine(targetScene, entranceId));
+        if (!isLoading) StartCoroutine(SimpleLoadSceneCoroutine(targetScene, entranceId, message, minSimpleLoadTime));
     }
 
     // =========================
@@ -158,31 +226,48 @@ public class LoadingScreenManager : MonoBehaviour
         isLoading = false;
     }
 
-    IEnumerator SimpleLoadSceneCoroutine(string targetScene, string entranceId)
+    IEnumerator SimpleLoadSceneCoroutine(string targetScene, string entranceId, string message, float minSimpleLoadTime)
     {
         isLoading = true;
         PauseLocomotionScripts();
 
-        // Bleibt die ganze Zeit schwarz, Ladebildschirm-Visuals werden nie eingeblendet
-        yield return StartCoroutine(FadeToBlack(fadeTime));
+        bool useMessageBlackout = UseMessageBlackout(message);
+
+        // Abblenden: entweder über das opake Text-Overlay (liegt VOR dem Post-Processing,
+        // damit der Text sichtbar bleibt) oder klassisch über die Post-Processing-Schwarzblende.
+        if (useMessageBlackout)
+            yield return StartCoroutine(ui.ShowMessage(message, fadeTime));
+        else
+            yield return StartCoroutine(FadeToBlack(fadeTime));
 
         yield return UnloadCurrentScene();
         TeleportPlayerToLoadingScreen();
 
-        yield return StartCoroutine(PerformLoadSequence(targetScene, entranceId, true, false, 2f));
+        yield return StartCoroutine(PerformLoadSequence(targetScene, entranceId, true, false, 2f, minSimpleLoadTime, message));
         isLoading = false;
     }
 
-    private IEnumerator PerformLoadSequence(string targetScene, string entranceId, bool useMusicFadeIn, bool showVisuals, float fadeInMultiplier = 1f)
+    // Text-Overlay nur nutzen, wenn eine Nachricht vorliegt UND die Overlay-Kamera bereit ist.
+    // Sonst Fallback auf die klassische Post-Processing-Schwarzblende (kein Regressionsrisiko).
+    private bool UseMessageBlackout(string message)
+    {
+        return !string.IsNullOrEmpty(message) && messageOverlayReady && ui != null && ui.messageCanvasGroup != null;
+    }
+
+    private IEnumerator PerformLoadSequence(string targetScene, string entranceId, bool useMusicFadeIn, bool showVisuals, float fadeInMultiplier = 1f, float minTimeOverride = -1f, string message = "")
     {
         if (useMusicFadeIn && music != null)
             StartCoroutine(music.FadeIn(fadeTime * fadeInMultiplier));
 
+        // Abblendquelle: opakes Text-Overlay (bereits vom Aufrufer eingeblendet) oder Post-Processing.
+        bool useMessageBlackout = UseMessageBlackout(message);
+
         var load = SceneManager.LoadSceneAsync(targetScene, LoadSceneMode.Additive);
         load.allowSceneActivation = false;
 
+        float minTime = minTimeOverride >= 0f ? minTimeOverride : minLoadTime;
         float timer = 0f;
-        while (timer < minLoadTime || load.progress < 0.9f)
+        while (timer < minTime || load.progress < 0.9f)
         {
             timer += Time.deltaTime;
             ui?.SetProgress(Mathf.Clamp01(load.progress / 0.9f));
@@ -210,8 +295,11 @@ public class LoadingScreenManager : MonoBehaviour
 
         DisableLoadingScreen();
 
-        // Übergang 2b: neue Szene einblenden
-        yield return StartCoroutine(FadeFromBlack(fadeTime));
+        // Übergang 2b: neue Szene einblenden – Text-Overlay bzw. Post-Processing wieder aufblenden
+        if (useMessageBlackout)
+            yield return StartCoroutine(ui.HideMessage(fadeTime));
+        else
+            yield return StartCoroutine(FadeFromBlack(fadeTime));
     }
 
     private IEnumerator UnloadCurrentScene()

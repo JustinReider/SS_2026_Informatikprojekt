@@ -6,8 +6,20 @@ using System.Collections;
 public class BettInteractable : MonoBehaviour
 {
     private UnityEngine.XR.Interaction.Toolkit.Interactables.XRSimpleInteractable interactable;
-    public Canvas fadeCanvas;
-    public float fadeDauer = 3f;
+
+    [Header("Ziel & Ablauf")]
+    [Tooltip("Szene, in die nach dem Schlafengehen geladen wird.")]
+    public string zielSzene = "Lobby";
+    [Tooltip("Eingang in der Zielszene.")]
+    public string entranceId = "default";
+    [Tooltip("Mindestdauer des schwarzen Ladebildschirms – Zeit, um den Text zu lesen.")]
+    public float schlafDauer = 8f;
+
+    [Header("Abschlusstext (in VR sichtbar)")]
+    [TextArea(2, 5)]
+    public string schlafText =
+        "Du legst dich zur Ruhe.\n\nDer Ofen ist kalt, das letzte Brot gebacken –\nein erfülltes Leben als Bäcker geht zu Ende.\n\nSchlaf wohl.";
+
     private bool bettBenutzt = false;
 
     void Start()
@@ -17,10 +29,6 @@ public class BettInteractable : MonoBehaviour
             interactable = gameObject.AddComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRSimpleInteractable>();
 
         interactable.selectEntered.AddListener(OnBettSelected);
-
-        // Fade Canvas Setup
-        if (fadeCanvas == null)
-            fadeCanvas = FindObjectOfType<Canvas>();
     }
 
     void OnBettSelected(SelectEnterEventArgs args)
@@ -34,13 +42,12 @@ public class BettInteractable : MonoBehaviour
 
     IEnumerator SchlafenAnimation()
     {
+        // Kleine "Hinlegen"-Geste: Kamera leicht nach oben fahren
         Transform kamera = Camera.main.transform;
         Vector3 startPos = kamera.position;
         Vector3 endPos = startPos + Vector3.up * 0.5f;
 
         float timer = 0f;
-
-        // Kamera nach oben fahren
         while (timer < 1f)
         {
             timer += Time.deltaTime / 1f;
@@ -48,28 +55,15 @@ public class BettInteractable : MonoBehaviour
             yield return null;
         }
 
-        // Fade to Black
-        yield return StartCoroutine(FadeToBlack(fadeDauer));
-
-        // Zur Lobby teleportieren
-        SceneManager.LoadScene("Lobby"); // ← Scene Name anpassen!
-    }
-
-    IEnumerator FadeToBlack(float dauer)
-    {
-        CanvasGroup canvasGroup = fadeCanvas.GetComponent<CanvasGroup>();
-        if (canvasGroup == null)
-            canvasGroup = fadeCanvas.gameObject.AddComponent<CanvasGroup>();
-
-        float timer = 0f;
-
-        while (timer < dauer)
+        // Übergang über den Simple-Ladebildschirm (durchgehend schwarz) inkl. Abschlusstext
+        if (LoadingScreenManager.Instance != null)
         {
-            timer += Time.deltaTime;
-            canvasGroup.alpha = timer / dauer;
-            yield return null;
+            LoadingScreenManager.Instance.SimpleLoadScene(zielSzene, entranceId, schlafText, schlafDauer);
         }
-
-        canvasGroup.alpha = 1f;
+        else
+        {
+            // Fallback, falls kein LoadingScreenManager vorhanden ist
+            SceneManager.LoadScene(zielSzene);
+        }
     }
 }
