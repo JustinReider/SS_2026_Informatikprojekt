@@ -20,6 +20,12 @@ public class BettInteractable : MonoBehaviour
     public string schlafText =
         "Du legst dich zur Ruhe.\n\nDer Ofen ist kalt, das letzte Brot gebacken –\nein erfülltes Leben als Bäcker geht zu Ende.\n\nSchlaf wohl.";
 
+    [Header("Sound (optional)")]
+    [Tooltip("AudioSource am Bett, über die der Klick-Sound abgespielt wird. Leer = AudioSource am selben GameObject.")]
+    public AudioSource audioSource;
+    [Tooltip("Sound, der direkt beim Anklicken abgespielt wird. Leer = kein Sound.")]
+    public AudioClip klickSound;
+
     private bool bettBenutzt = false;
 
     void Start()
@@ -28,16 +34,26 @@ public class BettInteractable : MonoBehaviour
         if (interactable == null)
             interactable = gameObject.AddComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRSimpleInteractable>();
 
-        interactable.selectEntered.AddListener(OnBettSelected);
+        interactable.activated.AddListener(OnBettActivated);
+
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
     }
 
-    void OnBettSelected(SelectEnterEventArgs args)
+    void OnBettActivated(ActivateEventArgs args)
     {
         if (!bettBenutzt)
         {
             bettBenutzt = true;
+            PlayKlickSound();
             StartCoroutine(SchlafenAnimation());
         }
+    }
+
+    private void PlayKlickSound()
+    {
+        if (audioSource == null || klickSound == null) return;
+        audioSource.PlayOneShot(klickSound);
     }
 
     IEnumerator SchlafenAnimation()
