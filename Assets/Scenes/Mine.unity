@@ -5844,20 +5844,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 88e2a7d8469f99540b9f0c570f9579ae, type: 3}
---- !u!114 &666976028325092923
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7766826764992867847}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f0b77c82527d614a92397f4d67de641, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DelayedSpawner
-  character: {fileID: 0}
-  spawnDelay: 4.3
 --- !u!1001 &672179121756603969
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7647,20 +7633,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af6d9ed7e6aab28f3b2d365a5933fd03, type: 3}
---- !u!114 &1883738992578766351
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8535050204398210604}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f0b77c82527d614a92397f4d67de641, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DelayedSpawner
-  character: {fileID: 0}
-  spawnDelay: 6.21
 --- !u!1001 &1892952686341600186
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16398,7 +16370,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2378545751190203200}
-  - component: {fileID: 8513250999230278207}
   m_Layer: 0
   m_Name: SoldatSpawner
   m_TagString: Untagged
@@ -19519,7 +19490,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6142266708031990059}
-  - component: {fileID: 666976028325092923}
   m_Layer: 0
   m_Name: SoldatSpawner
   m_TagString: Untagged
@@ -21071,20 +21041,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 10, y: 0.000000021209416, z: 9.999999}
   m_Center: {x: -0.00000017881393, y: 0.00000011920929, z: -0.0000019073486}
---- !u!114 &8513250999230278207
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5563984226492076002}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f0b77c82527d614a92397f4d67de641, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DelayedSpawner
-  character: {fileID: 0}
-  spawnDelay: 0.25
 --- !u!1 &8535050204398210604
 GameObject:
   m_ObjectHideFlags: 0
@@ -21094,7 +21050,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3509952175899994505}
-  - component: {fileID: 1883738992578766351}
   m_Layer: 0
   m_Name: SoldatSpawner
   m_TagString: Untagged
